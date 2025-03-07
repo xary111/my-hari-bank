@@ -332,37 +332,41 @@
     }
 
     // Функция для отображения панели администратора
-    function showAdminPanel(users) {
-      document.getElementById("registrationForm").style.display = "none";
-      document.getElementById("adminPanel").style.display = "block";
+    // Функция для отображения панели администратора
+function showAdminPanel(users) {
+  document.getElementById("registrationForm").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
 
-      const adminNickInput = document.getElementById("adminNick");
-      const userDropdown = document.getElementById("userDropdown");
+  const adminNickInput = document.getElementById("adminNick");
+  const userDropdown = document.getElementById("userDropdown");
 
-      // Очищаем выпадающий список
-      userDropdown.innerHTML = "";
+  // Очищаем выпадающий список
+  userDropdown.innerHTML = "";
 
-      // Добавляем пользователей в выпадающий список
-      users.forEach((user, index) => {
-        if (user[2] === "false" || user[2] === false) { // Исключаем администратора
-          const userDiv = document.createElement("div");
-          userDiv.textContent = user[0]; // Никнейм
-          userDiv.onclick = () => {
-            adminNickInput.value = user[0];
-            document.getElementById("adminPassword").value = user[1];
-            document.getElementById("adminPoints").value = user[3];
-            document.getElementById("adminHaricoins").value = user[4];
-            userDropdown.style.display = "none"; // Скрываем список после выбора
-          };
-          userDropdown.appendChild(userDiv);
-        }
-      });
+  console.log("Пользователи из таблицы:", users); // Отладочное сообщение
 
-      // Показываем выпадающий список при клике на поле "Никнейм"
-      adminNickInput.onclick = () => {
-        userDropdown.style.display = "block";
+  // Добавляем пользователей в выпадающий список
+  users.forEach((user, index) => {
+    if (user[2] === "false" || user[2] === false) { // Исключаем администратора
+      const userDiv = document.createElement("div");
+      userDiv.textContent = user[0]; // Никнейм
+      userDiv.onclick = () => {
+        adminNickInput.value = user[0];
+        document.getElementById("adminPassword").value = user[1];
+        document.getElementById("adminPoints").value = user[3];
+        document.getElementById("adminHaricoins").value = user[4];
+        userDropdown.style.display = "none"; // Скрываем список после выбора
       };
+      userDropdown.appendChild(userDiv);
     }
+  });
+
+  // Показываем выпадающий список при клике на поле "Никнейм"
+  adminNickInput.onclick = () => {
+    console.log("Клик по полю 'Никнейм'"); // Отладочное сообщение
+    userDropdown.style.display = "block";
+  };
+}
 
     // Функция для обновления данных пользователя
     async function updateUserData() {
