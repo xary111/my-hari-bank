@@ -249,9 +249,12 @@
         const user = users.find(user => user[0] === nick && user[1] === password);
 
         if (user) {
-          if (user[2] === "true" || user[2] === true) { // Проверка на администратора
+          console.log("Найден пользователь:", user);
+          if (user[2] === true || user[2] === "true") { // Проверка на администратора
+            console.log("Пользователь является администратором");
             showAdminPanel(users);
           } else {
+            console.log("Пользователь не является администратором");
             showProfile(user);
           }
         } else {
