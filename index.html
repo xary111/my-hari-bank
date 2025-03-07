@@ -172,8 +172,8 @@
 
     // Функция для регистрации
     function register() {
-      const nick = document.getElementById("nick").value;
-      const password = document.getElementById("password").value;
+      const nick = document.getElementById("nick").value.trim(); // Убираем пробелы
+      const password = document.getElementById("password").value.trim(); // Убираем пробелы
 
       // Проверяем, есть ли уже такой пользователь
       const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -197,6 +197,9 @@
       localStorage.setItem("users", JSON.stringify(users));
       showMessage("Регистрация прошла успешно!", "green");
 
+      // Отладочный вывод
+      console.log("Зарегистрированные пользователи:", users);
+
       // Очищаем поля ввода
       document.getElementById("nick").value = "";
       document.getElementById("password").value = "";
@@ -204,11 +207,15 @@
 
     // Функция для входа
     function login() {
-      const nick = document.getElementById("nick").value;
-      const password = document.getElementById("password").value;
+      const nick = document.getElementById("nick").value.trim(); // Убираем пробелы
+      const password = document.getElementById("password").value.trim(); // Убираем пробелы
 
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const user = users.find(user => user.nick === nick && user.password === password);
+
+      // Отладочный вывод
+      console.log("Все пользователи:", users);
+      console.log("Найденный пользователь:", user);
 
       if (user) {
         if (user.isAdmin) {
