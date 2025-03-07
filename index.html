@@ -156,7 +156,7 @@ const apiKey = "AIzaSyBuVBOACd6ZnWJLInSdHECrw07hx_d8tFg"; // Замени на �
 
 // Функция для чтения данных из таблицы
 async function readData() {
-  const url = `https://docs.google.com/spreadsheets/d/1QYZeJonqTuGASyfIQN7BoV1Sls4zGChQCy_gHRh-9ck/edit?usp=sharing${spreadsheetId}/values/Sheet1?key=${apiKey}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
   console.log("Запрос к таблице:", url); // Отладочное сообщение
 
   try {
