@@ -151,129 +151,38 @@
   </div>
 
   <script>
-   const spreadsheetId = "1QYZeJonqTuGASyfIQN7BoV1Sls4zGChQCy_gHRh-9ck"; // Замени на свой ID
-const apiKey = "AIzaSyAYXP4fq59VAGpyLjmKatydhBussnQF86c"; // Замени на свой API-ключ
+    const spreadsheetId = "1QYZeJonqTuGASyfIQN7BoV1Sls4zGChQCy_gHRh-9ck"; // Замени на свой ID
+    const apiKey = "AIzaSyAYXP4fq59VAGpyLjmKatydhBussnQF86c"; // Замени на свой API-ключ
 
-// Функция для чтения данных из таблицы
-async function readData() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
-  console.log("Запрос к таблице:", url); // Отладочное сообщение
+    // Функция для чтения данных из таблицы
+    async function readData() {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
+      console.log("Запрос к таблице:", url);
 
-  try {
-    const response = await fetch(url);
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Ответ от API:", data);
 
-    // Проверяем статус ответа
-    if (!response.ok) {
-      throw new Error(`Ошибка HTTP: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("Ответ от API:", data); // Отладочное сообщение
-
-    // Проверяем, есть ли данные
-    if (!data.values) {
-      console.error("Таблица пуста или данные не найдены.");
-      return [];
-    }
-
-    return data.values;
-  } catch (error) {
-    console.error("Ошибка при чтении данных:", error); // Отладочное сообщение
-    showMessage("Ошибка при загрузке данных!", "red");
-    return [];
-  }
-}
-
-// Функция для записи данных в таблицу
-async function writeData(data) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1:append?valueInputOption=RAW&key=${apiKey}`;
-  console.log("Запрос на запись:", url, data); // Отладочное сообщение
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        values: [data],
-      }),
-    });
-
-    const result = await response.json();
-    console.log("Результат записи:", result); // Отладочное сообщение
-    return result;
-  } catch (error) {
-    console.error("Ошибка при записи данных:", error); // Отладочное сообщение
-    showMessage("Ошибка при записи данных!", "red");
-  }
-}
-
-// Функция для регистрации
-async function register() {
-  const nick = document.getElementById("nick").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  console.log("Регистрация:", nick, password); // Отладочное сообщение
-
-  try {
-    const users = await readData();
-    const userExists = users.some(user => user[0] === nick);
-
-    if (userExists) {
-      showMessage("Пользователь с таким именем уже существует!", "red");
-      return;
-    }
-
-    const newUser = [nick, password, false, 0, 0]; // Формат строки
-    await writeData(newUser);
-    showMessage("Регистрация прошла успешно!", "green");
-
-    document.getElementById("nick").value = "";
-    document.getElementById("password").value = "";
-  } catch (error) {
-    console.error("Ошибка при регистрации:", error); // Отладочное сообщение
-    showMessage("Ошибка при регистрации!", "red");
-  }
-}
-
-// Функция для входа
-async function login() {
-  const nick = document.getElementById("nick").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  console.log("Вход:", nick, password); // Отладочное сообщение
-
-  try {
-    const users = await readData();
-
-    // Проверяем, есть ли данные
-    if (!users || users.length === 0) {
-      showMessage("Ошибка: данные не загружены!", "red");
-      return;
-    }
-
-    const user = users.find(user => user[0] === nick && user[1] === password);
-
-    if (user) {
-      if (user[2] === "true") {
-        showAdminPanel(users);
-      } else {
-        showProfile(user);
+        if (!data.values) {
+          console.error("Таблица пуста или данные не найдены.");
+          return [];
+        }
+        return data.values;
+      } catch (error) {
+        console.error("Ошибка при чтении данных:", error);
+        showMessage("Ошибка при загрузке данных!", "red");
+        return [];
       }
-    } else {
-      showMessage("Неверный логин или пароль!", "red");
     }
-  } catch (error) {
-    console.error("Ошибка при входе:", error); // Отладочное сообщение
-    showMessage("Ошибка при входе!", "red");
-  }
-}
 
     // Функция для записи данных в таблицу
     async function writeData(data) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1:append?valueInputOption=RAW&key=${apiKey}`;
-      console.log("Запрос на запись:", url, data); // Отладочное сообщение
+      console.log("Запрос на запись:", url, data);
 
       try {
         const response = await fetch(url, {
@@ -287,10 +196,10 @@ async function login() {
         });
 
         const result = await response.json();
-        console.log("Результат записи:", result); // Отладочное сообщение
+        console.log("Результат записи:", result);
         return result;
       } catch (error) {
-        console.error("Ошибка при записи данных:", error); // Отладочное сообщение
+        console.error("Ошибка при записи данных:", error);
         showMessage("Ошибка при записи данных!", "red");
       }
     }
@@ -300,7 +209,7 @@ async function login() {
       const nick = document.getElementById("nick").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      console.log("Регистрация:", nick, password); // Отладочное сообщение
+      console.log("Регистрация:", nick, password);
 
       try {
         const users = await readData();
@@ -318,7 +227,7 @@ async function login() {
         document.getElementById("nick").value = "";
         document.getElementById("password").value = "";
       } catch (error) {
-        console.error("Ошибка при регистрации:", error); // Отладочное сообщение
+        console.error("Ошибка при регистрации:", error);
         showMessage("Ошибка при регистрации!", "red");
       }
     }
@@ -328,12 +237,10 @@ async function login() {
       const nick = document.getElementById("nick").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      console.log("Вход:", nick, password); // Отладочное сообщение
+      console.log("Вход:", nick, password);
 
       try {
         const users = await readData();
-
-        // Проверяем, есть ли данные
         if (!users || users.length === 0) {
           showMessage("Ошибка: данные не загружены!", "red");
           return;
@@ -342,7 +249,7 @@ async function login() {
         const user = users.find(user => user[0] === nick && user[1] === password);
 
         if (user) {
-          if (user[2] === "true") {
+          if (user[2] === "true" || user[2] === true) { // Проверка на администратора
             showAdminPanel(users);
           } else {
             showProfile(user);
@@ -351,7 +258,7 @@ async function login() {
           showMessage("Неверный логин или пароль!", "red");
         }
       } catch (error) {
-        console.error("Ошибка при входе:", error); // Отладочное сообщение
+        console.error("Ошибка при входе:", error);
         showMessage("Ошибка при входе!", "red");
       }
     }
@@ -406,9 +313,9 @@ async function login() {
 
       // Заполняем список пользователей
       const userList = document.getElementById("userList");
-      userList.innerHTML = ""; // Очищаем список перед заполнением
+      userList.innerHTML = "";
       users.forEach((user, index) => {
-        if (user[2] === "false") { // Не показываем администратора в списке
+        if (user[2] === "false" || user[2] === false) { // Не показываем администратора
           const option = document.createElement("option");
           option.value = index + 1; // Номер строки в таблице
           option.textContent = user[0]; // Никнейм
@@ -417,7 +324,7 @@ async function login() {
       });
 
       // Показываем данные первого пользователя в списке
-      if (users.length > 1) { // Исключаем администратора
+      if (users.length > 1) {
         showUserDetails(2); // Первый пользователь после администратора
       }
     }
@@ -450,14 +357,6 @@ async function login() {
         await updateData(rowIndex, user);
         showMessage("Данные пользователя обновлены!", "green");
       }
-    }
-
-    // Функция для удаления пользователя
-    async function deleteUser() {
-      const rowIndex = document.getElementById("userList").value;
-      await deleteData(rowIndex);
-      showMessage("Пользователь удален!", "green");
-      showAdminPanel(await readData()); // Обновляем панель администратора
     }
 
     // Функция для выхода
