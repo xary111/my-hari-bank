@@ -373,6 +373,87 @@
         messageElement.style.color = color;
       }
     }
+
+    // Функция для обновления данных пользователя
+    async function updateUserData() {
+      const nick = document.getElementById("adminNick").value;
+      const points = document.getElementById("adminPoints").value;
+      const haricoins = document.getElementById("adminHaricoins").value;
+
+      if (!nick) {
+        showMessage("Выберите пользователя!", "red");
+        return;
+      }
+
+      try {
+        const users = await readData();
+        const userIndex = users.findIndex(user => user[0] === nick);
+
+        if (userIndex !== -1) {
+          users[userIndex][3] = parseInt(points, 10);
+          users[userIndex][4] = parseInt(haricoins, 10);
+
+          await writeAllData(users);
+          showMessage("Данные успешно обновлены!", "green");
+        } else {
+          showMessage("Пользователь не найден!", "red");
+        }
+      } catch (error) {
+        console.error("Ошибка при обновлении данных:", error);
+        showMessage("Ошибка при обновлении данных!", "red");
+      }
+    }
+
+    // Функция для записи всех данных в таблицу
+    async function writeAllData(data) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?valueInputOption=RAW&key=${apiKey}`;
+      try {
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            values: data,
+          }),
+        });
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        console.error("Ошибка при записи данных:", error);
+        showMessage("Ошибка при записи данных!", "red");
+      }
+    }
+
+    // Функция для удаления пользователя
+    async function deleteUser() {
+      const nick = document.getElementById("adminNick").value;
+
+      if (!nick) {
+        showMessage("Выберите пользователя!", "red");
+        return;
+      }
+
+      try {
+        const users = await readData();
+        const updatedUsers = users.filter(user => user[0] !== nick);
+
+        if (updatedUsers.length === users.length) {
+          showMessage("Пользователь не найден!", "red");
+          return;
+        }
+
+        await writeAllData(updatedUsers);
+        showMessage("Пользователь успешно удален!", "green");
+        document.getElementById("adminNick").value = "";
+        document.getElementById("adminPassword").value = "";
+        document.getElementById("adminPoints").value = "0";
+        document.getElementById("adminHaricoins").value = "0";
+      } catch (error) {
+        console.error("Ошибка при удалении пользователя:", error);
+        showMessage("Ошибка при удалении пользователя!", "red");
+      }
+    }
   </script>
 </body>
 </html>
