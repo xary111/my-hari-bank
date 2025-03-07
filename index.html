@@ -247,7 +247,15 @@
           <h2>Панель администратора</h2>
           <div class="form-group">
             <label>Выберите пользователя:</label>
-            <select id="userList"></select>
+            <select id="userList" onchange="showUserDetails()"></select>
+          </div>
+          <div class="form-group">
+            <label>Никнейм:</label>
+            <input type="text" id="adminNick" readonly>
+          </div>
+          <div class="form-group">
+            <label>Пароль:</label>
+            <input type="text" id="adminPassword" readonly>
           </div>
           <div class="form-group">
             <label>Баллы:</label>
@@ -258,12 +266,14 @@
             <input type="number" id="adminHaricoins" value="0">
           </div>
           <button onclick="updateUserData()">Обновить данные</button>
+          <button onclick="deleteUser()" style="background-color: #ff4444;">Удалить пользователя</button>
           <button onclick="logout()">Выйти</button>
         </div>
       `;
 
       // Заполняем список пользователей
       const userList = document.getElementById("userList");
+      userList.innerHTML = ""; // Очищаем список перед заполнением
       users.forEach(user => {
         if (!user.isAdmin) { // Не показываем администратора в списке
           const option = document.createElement("option");
@@ -272,6 +282,25 @@
           userList.appendChild(option);
         }
       });
+
+      // Показываем данные первого пользователя в списке
+      if (users.length > 1) { // Исключаем администратора
+        showUserDetails();
+      }
+    }
+
+    // Функция для отображения данных выбранного пользователя
+    function showUserDetails() {
+      const selectedUserNick = document.getElementById("userList").value;
+      const users = JSON.parse(localStorage.getItem("users"));
+      const user = users.find(user => user.nick === selectedUserNick);
+
+      if (user) {
+        document.getElementById("adminNick").value = user.nick;
+        document.getElementById("adminPassword").value = user.password;
+        document.getElementById("adminPoints").value = user.points;
+        document.getElementById("adminHaricoins").value = user.haricoins;
+      }
     }
 
     // Функция для обновления данных пользователя
@@ -289,6 +318,20 @@
         localStorage.setItem("users", JSON.stringify(users));
         showMessage("Данные пользователя обновлены!", "green");
       }
+    }
+
+    // Функция для удаления пользователя
+    function deleteUser() {
+      const selectedUserNick = document.getElementById("userList").value;
+      let users = JSON.parse(localStorage.getItem("users"));
+
+      // Удаляем пользователя из списка
+      users = users.filter(user => user.nick !== selectedUserNick);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      // Обновляем список пользователей
+      showAdminPanel(users);
+      showMessage("Пользователь удален!", "green");
     }
 
     // Функция для выхода
