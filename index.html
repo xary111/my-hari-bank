@@ -155,29 +155,42 @@
     const apiKey = "AIzaSyAYXP4fq59VAGpyLjmKatydhBussnQF86c"; // Замени на свой API-ключ
 
     // Функция для чтения данных из таблицы
-    async function readData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
-      console.log("Запрос к таблице:", url);
+   async function login() {
+  const nick = document.getElementById("nick").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Ошибка HTTP: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Ответ от API:", data);
+  console.log("Вход:", nick, password);
 
-        if (!data.values) {
-          console.error("Таблица пуста или данные не найдены.");
-          return [];
-        }
-        return data.values;
-      } catch (error) {
-        console.error("Ошибка при чтении данных:", error);
-        showMessage("Ошибка при загрузке данных!", "red");
-        return [];
-      }
+  try {
+    const users = await readData();
+    console.log("Данные пользователей:", users); // Отладочное сообщение
+
+    if (!users || users.length === 0) {
+      showMessage("Ошибка: данные не загружены!", "red");
+      return;
     }
+
+    const user = users.find(user => user[0] === nick && user[1] === password);
+
+    if (user) {
+      console.log("Найден пользователь:", user); // Отладочное сообщение
+
+      // Проверка на администратора (учитываем строку "TRUE" и булево значение true)
+      if (user[2] === true || user[2].toUpperCase() === "TRUE") {
+        console.log("Пользователь является администратором"); // Отладочное сообщение
+        showAdminPanel(users);
+      } else {
+        console.log("Пользователь не является администратором"); // Отладочное сообщение
+        showProfile(user);
+      }
+    } else {
+      showMessage("Неверный логин или пароль!", "red");
+    }
+  } catch (error) {
+    console.error("Ошибка при входе:", error);
+    showMessage("Ошибка при входе!", "red");
+  }
+}
 
     // Функция для записи данных в таблицу
     async function writeData(data) {
