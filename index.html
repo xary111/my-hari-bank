@@ -111,6 +111,7 @@
       cursor: pointer;
       font-size: 16px;
       transition: all 0.3s ease;
+      margin: 5px;
     }
 
     button:hover {
@@ -207,16 +208,12 @@
     // Функция для чтения данных из таблицы
     async function readData() {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
-      console.log("Запрос к таблице:", url);
-
       try {
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Ошибка HTTP: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Ответ от API:", data);
-
         if (!data.values) {
           console.error("Таблица пуста или данные не найдены.");
           return [];
@@ -232,8 +229,6 @@
     // Функция для записи данных в таблицу
     async function writeData(data) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1:append?valueInputOption=RAW&key=${apiKey}`;
-      console.log("Запрос на запись:", url, data);
-
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -244,13 +239,33 @@
             values: [data],
           }),
         });
-
         const result = await response.json();
-        console.log("Результат записи:", result);
         return result;
       } catch (error) {
         console.error("Ошибка при записи данных:", error);
         showMessage("Ошибка при записи данных!", "red");
+      }
+    }
+
+    // Функция для обновления данных в таблице
+    async function updateData(row, data) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1!A${row}:E${row}?valueInputOption=RAW&key=${apiKey}`;
+      try {
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            range: `Sheet1!A${row}:E${row}`,
+            values: [data],
+          }),
+        });
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        console.error("Ошибка при обновлении данных:", error);
+        return { error: true };
       }
     }
 
@@ -259,7 +274,10 @@
       const nick = document.getElementById("nick").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      console.log("Регистрация:", nick, password);
+      if (!nick || !password) {
+        showMessage("Заполните все поля!", "red");
+        return;
+      }
 
       try {
         const users = await readData();
@@ -287,28 +305,19 @@
       const nick = document.getElementById("nick").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      console.log("Вход:", nick, password);
+      if (!nick || !password) {
+        showMessage("Заполните все поля!", "red");
+        return;
+      }
 
       try {
         const users = await readData();
-        console.log("Данные пользователей:", users); // Отладочное сообщение
-
-        if (!users || users.length === 0) {
-          showMessage("Ошибка: данные не загружены!", "red");
-          return;
-        }
-
         const user = users.find(user => user[0] === nick && user[1] === password);
 
         if (user) {
-          console.log("Найден пользователь:", user); // Отладочное сообщение
-
-          // Проверка на администратора (учитываем строку "TRUE" и булево значение true)
           if (user[2] === true || user[2].toUpperCase() === "TRUE") {
-            console.log("Пользователь является администратором"); // Отладочное сообщение
             showAdminPanel(users);
           } else {
-            console.log("Пользователь не является администратором"); // Отладочное сообщение
             showProfile(user);
           }
         } else {
@@ -341,23 +350,18 @@
       document.getElementById("adminPanel").style.display = "block";
 
       const userDropdown = document.getElementById("userDropdown");
-
-      // Очищаем выпадающий список
       userDropdown.innerHTML = "";
 
-      console.log("Пользователи из таблицы:", users); // Отладочное сообщение
-
-      // Добавляем пользователей в выпадающий список
       users.forEach((user, index) => {
-        if (user[2] === "false" || user[2] === false) { // Исключаем администратора
+        if (user[2] === "false" || user[2] === false) {
           const userDiv = document.createElement("div");
-          userDiv.textContent = user[0]; // Никнейм
+          userDiv.textContent = user[0];
           userDiv.onclick = () => {
             document.getElementById("adminNick").value = user[0];
             document.getElementById("adminPassword").value = user[1];
             document.getElementById("adminPoints").value = user[3];
             document.getElementById("adminHaricoins").value = user[4];
-            userDropdown.style.display = "none"; // Скрываем список после выбора
+            userDropdown.style.display = "none";
           };
           userDropdown.appendChild(userDiv);
         }
@@ -367,11 +371,7 @@
     // Функция для переключения выпадающего списка
     function toggleDropdown() {
       const userDropdown = document.getElementById("userDropdown");
-      if (userDropdown.style.display === "block") {
-        userDropdown.style.display = "none";
-      } else {
-        userDropdown.style.display = "block";
-      }
+      userDropdown.style.display = userDropdown.style.display === "block" ? "none" : "block";
     }
 
     // Функция для обновления данных пользователя
@@ -385,14 +385,14 @@
 
       if (userIndex !== -1) {
         const updatedUser = [
-          users[userIndex][0], // Никнейм
-          users[userIndex][1], // Пароль
-          users[userIndex][2], // Администратор
-          points, // Баллы
-          haricoins, // Харикоины
+          users[userIndex][0],
+          users[userIndex][1],
+          users[userIndex][2],
+          points,
+          haricoins,
         ];
 
-        const result = await updateData(userIndex + 1, updatedUser); // Обновляем данные в таблице
+        const result = await updateData(userIndex + 1, updatedUser);
         if (result.error) {
           showMessage("Ошибка при обновлении данных!", "red");
         } else {
@@ -409,8 +409,6 @@
       if (messageElement) {
         messageElement.innerText = message;
         messageElement.style.color = color;
-      } else {
-        console.error("Элемент для сообщений не найден!");
       }
     }
 
