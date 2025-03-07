@@ -151,19 +151,65 @@
   </div>
 
   <script>
-    // Конфигурация Google Sheets API
-    const spreadsheetId = "1QYZeJonqTuGASyfIQN7BoV1Sls4zGChQCy_gHRh-9ck"; // Замени на ID своей таблицы
-    const apiKey = "AIzaSyC3DApHs_Xna0dszkfuPBxmwnsErqt8fZY"; // Замени на свой API-ключ
+    const spreadsheetId = "ТВОЙ_ID_ТАБЛИЦЫ"; // Замени на ID своей таблицы
+const apiKey = "ТВОЙ_API_КЛЮЧ"; // Замени на свой API-ключ
 
-    // Функция для чтения данных из таблицы
-    async function readData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.values; // Возвращает массив строк
+// Функция для чтения данных из таблицы
+async function readData() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
+  console.log("Запрос к таблице:", url); // Отладочное сообщение
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    console.log("Ответ от API:", data); // Отладочное сообщение
+
+    // Проверяем, есть ли данные
+    if (!data.values) {
+      console.error("Таблица пуста или данные не найдены.");
+      return [];
     }
 
-    // Функция для записи данных в таблицу
+    return data.values;
+  } catch (error) {
+    console.error("Ошибка при чтении данных:", error); // Отладочное сообщение
+    return [];
+  }
+}
+
+// Функция для входа
+async function login() {
+  const nick = document.getElementById("nick").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  console.log("Вход:", nick, password); // Отладочное сообщение
+
+  try {
+    const users = await readData();
+
+    // Проверяем, есть ли данные
+    if (!users || users.length === 0) {
+      showMessage("Ошибка: данные не загружены!", "red");
+      return;
+    }
+
+    const user = users.find(user => user[0] === nick && user[1] === password);
+
+    if (user) {
+      if (user[2] === "true") {
+        showAdminPanel(users);
+      } else {
+        showProfile(user);
+      }
+    } else {
+      showMessage("Неверный логин или пароль!", "red");
+    }
+  } catch (error) {
+    console.error("Ошибка при входе:", error); // Отладочное сообщение
+    showMessage("Ошибка при входе!", "red");
+  }
+}     // Функция для записи данных в таблицу
     async function writeData(data) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1:append?valueInputOption=RAW&key=${apiKey}`;
       const response = await fetch(url, {
