@@ -123,19 +123,23 @@
       font-weight: bold;
     }
 
-    .user-list {
-      margin-top: 20px;
-      text-align: left;
+    #userDropdown {
+      display: none;
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ddd;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 10;
     }
 
-    .user-list div {
+    #userDropdown div {
       padding: 10px;
-      border-bottom: 1px solid #ddd;
       cursor: pointer;
     }
 
-    .user-list div:hover {
-      background-color: #f9f9f9;
+    #userDropdown div:hover {
+      background-color: #f1f1f1;
     }
   </style>
 </head>
@@ -162,6 +166,33 @@
       <button onclick="register()">Зарегистрироваться</button>
       <button onclick="login()">Войти</button>
       <div id="message"></div>
+    </div>
+  </div>
+
+  <div id="adminPanel" style="display: none;">
+    <h1>Hari Bank</h1>
+    <div>
+      <h2>Панель администратора</h2>
+      <div class="form-group">
+        <label>Выберите пользователя:</label>
+        <input type="text" id="adminNick" placeholder="Нажмите, чтобы выбрать пользователя" readonly>
+        <div id="userDropdown"></div>
+      </div>
+      <div class="form-group">
+        <label>Пароль:</label>
+        <input type="text" id="adminPassword" readonly>
+      </div>
+      <div class="form-group">
+        <label>Баллы:</label>
+        <input type="number" id="adminPoints" value="0">
+      </div>
+      <div class="form-group">
+        <label>Харикоины:</label>
+        <input type="number" id="adminHaricoins" value="0">
+      </div>
+      <button onclick="updateUserData()">Обновить данные</button>
+      <button onclick="deleteUser()" style="background-color: #ff4444;">Удалить пользователя</button>
+      <button onclick="logout()">Выйти</button>
     </div>
   </div>
 
@@ -219,185 +250,10 @@
       }
     }
 
-    // Функция для регистрации
-    async function register() {
-      const nick = document.getElementById("nick").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      console.log("Регистрация:", nick, password);
-
-      try {
-        const users = await readData();
-        const userExists = users.some(user => user[0] === nick);
-
-        if (userExists) {
-          showMessage("Пользователь с таким именем уже существует!", "red");
-          return;
-        }
-
-        const newUser = [nick, password, false, 0, 0]; // Формат строки
-        await writeData(newUser);
-        showMessage("Регистрация прошла успешно!", "green");
-
-        document.getElementById("nick").value = "";
-        document.getElementById("password").value = "";
-      } catch (error) {
-        console.error("Ошибка при регистрации:", error);
-        showMessage("Ошибка при регистрации!", "red");
-      }
-    }
-
-    // Функция для входа
-    async function login() {
-      const nick = document.getElementById("nick").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      console.log("Вход:", nick, password);
-
-      try {
-        const users = await readData();
-        console.log("Данные пользователей:", users); // Отладочное сообщение
-
-        if (!users || users.length === 0) {
-          showMessage("Ошибка: данные не загружены!", "red");
-          return;
-        }
-
-        const user = users.find(user => user[0] === nick && user[1] === password);
-
-        if (user) {
-          console.log("Найден пользователь:", user); // Отладочное сообщение
-
-          // Проверка на администратора (учитываем строку "TRUE" и булево значение true)
-          if (user[2] === true || user[2].toUpperCase() === "TRUE") {
-            console.log("Пользователь является администратором"); // Отладочное сообщение
-            showAdminPanel(users);
-          } else {
-            console.log("Пользователь не является администратором"); // Отладочное сообщение
-            showProfile(user);
-          }
-        } else {
-          showMessage("Неверный логин или пароль!", "red");
-        }
-      } catch (error) {
-        console.error("Ошибка при входе:", error);
-        showMessage("Ошибка при входе!", "red");
-      }
-    }
-
-    // Функция для отображения профиля
-    function showProfile(user) {
-      const container = document.querySelector(".container");
-      container.innerHTML = `
-        <h1>Hari Bank</h1>
-        <div id="profile">
-          <h2>Профиль</h2>
-          <p>Никнейм: <span id="profileNick">${user[0]}</span></p>
-          <p>Баллы: <span id="profilePoints">${user[3]}</span></p>
-          <p>Харикоины: <span id="profileHaricoins">${user[4]}</span></p>
-          <button onclick="logout()">Выйти</button>
-        </div>
-      `;
-    }
-
-    // Функция для отображения панели администратора
-    function showAdminPanel(users) {
-      const container = document.querySelector(".container");
-      container.innerHTML = `
-        <h1>Hari Bank</h1>
-        <div id="adminPanel">
-          <h2>Панель администратора</h2>
-          <div class="user-list" id="userList"></div>
-          <div class="form-group">
-            <label>Никнейм:</label>
-            <input type="text" id="adminNick" readonly>
-          </div>
-          <div class="form-group">
-            <label>Пароль:</label>
-            <input type="text" id="adminPassword" readonly>
-          </div>
-          <div class="form-group">
-            <label>Баллы:</label>
-            <input type="number" id="adminPoints" value="0">
-          </div>
-          <div class="form-group">
-            <label>Харикоины:</label>
-            <input type="number" id="adminHaricoins" value="0">
-          </div>
-          <button onclick="updateUserData()">Обновить данные</button>
-          <button onclick="deleteUser()" style="background-color: #ff4444;">Удалить пользователя</button>
-          <button onclick="logout()">Выйти</button>
-        </div>
-      `;
-
-      // Заполняем список пользователей
-      const userList = document.getElementById("userList");
-      userList.innerHTML = ""; // Очищаем список перед заполнением
-
-      // Добавляем пользователей в список
-      users.forEach((user, index) => {
-        // Проверяем, что пользователь не является администратором
-        if (user[2] === "false" || user[2] === false) {
-          const userElement = document.createElement("div");
-          userElement.textContent = user[0]; // Никнейм
-          userElement.onclick = () => showUserDetails(index + 1); // Привязываем обработчик клика
-          userList.appendChild(userElement);
-        }
-      });
-
-      // Показываем данные первого пользователя в списке
-      if (users.length > 1) {
-        showUserDetails(2); // Первый пользователь после администратора
-      }
-    }
-
-    // Функция для отображения данных выбранного пользователя
-    async function showUserDetails(rowIndex) {
-      const users = await readData();
-      const user = users[rowIndex - 1]; // Индексация с 0
-
-      if (user) {
-        document.getElementById("adminNick").value = user[0];
-        document.getElementById("adminPassword").value = user[1];
-        document.getElementById("adminPoints").value = user[3];
-        document.getElementById("adminHaricoins").value = user[4];
-      }
-    }
-
-    // Функция для обновления данных пользователя
-    async function updateUserData() {
-      const users = await readData();
-      const selectedUser = document.getElementById("adminNick").value;
-
-      const user = users.find(user => user[0] === selectedUser);
-
-      if (user) {
-        const points = parseInt(document.getElementById("adminPoints").value);
-        const haricoins = parseInt(document.getElementById("adminHaricoins").value);
-
-        user[3] = points; // Обновляем баллы
-        user[4] = haricoins; // Обновляем харикоины
-
-        await updateData(users);
-        showMessage("Данные пользователя обновлены!", "green");
-      }
-    }
-
-    // Функция для удаления пользователя
-    async function deleteUser() {
-      const users = await readData();
-      const selectedUser = document.getElementById("adminNick").value;
-
-      const updatedUsers = users.filter(user => user[0] !== selectedUser);
-
-      await updateData(updatedUsers);
-      showMessage("Пользователь удален!", "green");
-      showAdminPanel(updatedUsers); // Обновляем панель администратора
-    }
-
     // Функция для обновления данных в таблице
-    async function updateData(data) {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?valueInputOption=RAW&key=${apiKey}`;
+    async function updateData(rowIndex, data) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1!A${rowIndex}:E${rowIndex}?valueInputOption=RAW&key=${apiKey}`;
+      console.log("Запрос на обновление:", url, data);
 
       try {
         const response = await fetch(url, {
@@ -406,7 +262,9 @@
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            values: data,
+            range: `Sheet1!A${rowIndex}:E${rowIndex}`,
+            majorDimension: "ROWS",
+            values: [data],
           }),
         });
 
@@ -419,33 +277,83 @@
       }
     }
 
-    // Функция для выхода
-    function logout() {
-      const container = document.querySelector(".container");
-      container.innerHTML = `
-        <h1>Hari Bank</h1>
-        <div id="registrationForm">
-          <h2>Регистрация</h2>
-          <div class="form-group">
-            <label>Nick_Name:</label>
-            <input type="text" id="nick" required>
-          </div>
-          <div class="form-group">
-            <label>Пароль:</label>
-            <input type="password" id="password" required>
-          </div>
-          <button onclick="register()">Зарегистрироваться</button>
-          <button onclick="login()">Войти</button>
-          <div id="message"></div>
-        </div>
-      `;
+    // Функция для обновления данных пользователя
+    async function updateUserData() {
+      const nick = document.getElementById("adminNick").value;
+      const points = parseInt(document.getElementById("adminPoints").value);
+      const haricoins = parseInt(document.getElementById("adminHaricoins").value);
+
+      const users = await readData();
+      const userIndex = users.findIndex(user => user[0] === nick);
+
+      if (userIndex !== -1) {
+        const updatedUser = [
+          users[userIndex][0], // Никнейм
+          users[userIndex][1], // Пароль
+          users[userIndex][2], // Администратор
+          points, // Баллы
+          haricoins, // Харикоины
+        ];
+
+        const result = await updateData(userIndex + 1, updatedUser); // Обновляем данные в таблице
+        if (result.error) {
+          showMessage("Ошибка при обновлении данных!", "red");
+        } else {
+          showMessage("Данные пользователя обновлены!", "green");
+        }
+      } else {
+        showMessage("Пользователь не найден!", "red");
+      }
     }
 
     // Функция для отображения сообщений
     function showMessage(message, color) {
       const messageElement = document.getElementById("message");
-      messageElement.innerText = message;
-      messageElement.style.color = color;
+      if (messageElement) {
+        messageElement.innerText = message;
+        messageElement.style.color = color;
+      } else {
+        console.error("Элемент для сообщений не найден!");
+      }
+    }
+
+    // Функция для отображения панели администратора
+    function showAdminPanel(users) {
+      document.getElementById("registrationForm").style.display = "none";
+      document.getElementById("adminPanel").style.display = "block";
+
+      const adminNickInput = document.getElementById("adminNick");
+      const userDropdown = document.getElementById("userDropdown");
+
+      // Очищаем выпадающий список
+      userDropdown.innerHTML = "";
+
+      // Добавляем пользователей в выпадающий список
+      users.forEach((user, index) => {
+        if (user[2] === "false" || user[2] === false) { // Исключаем администратора
+          const userDiv = document.createElement("div");
+          userDiv.textContent = user[0]; // Никнейм
+          userDiv.onclick = () => {
+            adminNickInput.value = user[0];
+            document.getElementById("adminPassword").value = user[1];
+            document.getElementById("adminPoints").value = user[3];
+            document.getElementById("adminHaricoins").value = user[4];
+            userDropdown.style.display = "none"; // Скрываем список после выбора
+          };
+          userDropdown.appendChild(userDiv);
+        }
+      });
+
+      // Показываем выпадающий список при клике на поле "Никнейм"
+      adminNickInput.onclick = () => {
+        userDropdown.style.display = "block";
+      };
+    }
+
+    // Функция для выхода
+    function logout() {
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("registrationForm").style.display = "block";
     }
   </script>
 </body>
