@@ -5,144 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hari Bank</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-image: url('https://raw.githubusercontent.com/xary111/my-hari-bank/main/WE_D0l8j6Js.jpg');
-      background-size: contain;
-      background-position: center;
-      background-attachment: fixed;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      position: relative;
-    }
-
-    .gradient-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(67, 175, 87, 0.2) 33%,
-        rgba(33, 150, 243, 0.2) 66%,
-        rgba(243, 150, 33, 0.2) 100%
-      );
-      z-index: 1;
-    }
-
-    .leaf {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.18 2.74c-.29-.15-1.58-.87-2.99-.87-2.37 0-4.38 2.0[...]
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      animation: fall 3s linear infinite;
-      z-index: 2;
-    }
-
-    @keyframes fall {
-      0% {
-        transform: translateY(-100vh) rotate(0deg);
-        opacity: 0;
-      }
-      20% {
-        opacity: 1;
-      }
-      80% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    .container {
-      position: relative;
-      z-index: 3;
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      width: 80%;
-      max-width: 600px;
-    }
-
-    h1 {
-      color: #4CAF50;
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      color: #333;
-      font-weight: bold;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      margin: 5px;
-    }
-
-    button:hover {
-      background-color: #45a049;
-      transform: scale(1.05);
-    }
-
-    #message {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    #userDropdown {
-      display: none;
-      position: absolute;
-      background-color: white;
-      border: 1px solid #ddd;
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 10;
-      width: 100%;
-    }
-
-    #userDropdown div {
-      padding: 10px;
-      cursor: pointer;
-    }
-
-    #userDropdown div:hover {
-      background-color: #f1f1f1;
-    }
+    /* Ваши стили */
   </style>
 </head>
 <body>
@@ -177,11 +40,8 @@
       <h2>Панель администратора</h2>
       <div class="form-group">
         <label>Выберите пользователя:</label>
-        <div style="position: relative;">
-          <input type="text" id="adminNick" placeholder="Нажмите, чтобы выбрать пользователя" readonly>
-          <button onclick="toggleDropdown()" style="position: absolute; right: 0; top: 0; height: 100%; background: none; border: none; cursor: pointer;">▼</button>
-          <div id="userDropdown"></div>
-        </div>
+        <input type="text" id="adminNick" placeholder="Нажмите, чтобы выбрать пользователя" readonly>
+        <div id="userDropdown"></div>
       </div>
       <div class="form-group">
         <label>Пароль:</label>
@@ -208,12 +68,16 @@
     // Функция для чтения данных из таблицы
     async function readData() {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
+      console.log("Запрос к таблице:", url);
+
       try {
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Ошибка HTTP: ${response.status}`);
         }
         const data = await response.json();
+        console.log("Ответ от API:", data);
+
         if (!data.values) {
           console.error("Таблица пуста или данные не найдены.");
           return [];
@@ -229,6 +93,8 @@
     // Функция для записи данных в таблицу
     async function writeData(data) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1:append?valueInputOption=RAW&key=${apiKey}`;
+      console.log("Запрос на запись:", url, data);
+
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -239,7 +105,9 @@
             values: [data],
           }),
         });
+
         const result = await response.json();
+        console.log("Результат записи:", result);
         return result;
       } catch (error) {
         console.error("Ошибка при записи данных:", error);
@@ -252,10 +120,7 @@
       const nick = document.getElementById("nick").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      if (!nick || !password) {
-        showMessage("Заполните все поля!", "red");
-        return;
-      }
+      console.log("Регистрация:", nick, password);
 
       try {
         const users = await readData();
@@ -283,19 +148,28 @@
       const nick = document.getElementById("nick").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      if (!nick || !password) {
-        showMessage("Заполните все поля!", "red");
-        return;
-      }
+      console.log("Вход:", nick, password);
 
       try {
         const users = await readData();
+        console.log("Данные пользователей:", users); // Отладочное сообщение
+
+        if (!users || users.length === 0) {
+          showMessage("Ошибка: данные не загружены!", "red");
+          return;
+        }
+
         const user = users.find(user => user[0] === nick && user[1] === password);
 
         if (user) {
+          console.log("Найден пользователь:", user); // Отладочное сообщение
+
+          // Проверка на администратора (учитываем строку "TRUE" и булево значение true)
           if (user[2] === true || user[2].toUpperCase() === "TRUE") {
+            console.log("Пользователь является администратором"); // Отладочное сообщение
             showAdminPanel(users);
           } else {
+            console.log("Пользователь не является администратором"); // Отладочное сообщение
             showProfile(user);
           }
         } else {
@@ -327,41 +201,63 @@
       document.getElementById("registrationForm").style.display = "none";
       document.getElementById("adminPanel").style.display = "block";
 
+      const adminNickInput = document.getElementById("adminNick");
       const userDropdown = document.getElementById("userDropdown");
+
+      // Очищаем выпадающий список
       userDropdown.innerHTML = "";
 
+      console.log("Пользователи из таблицы:", users); // Отладочное сообщение
+
+      // Добавляем пользователей в выпадающий список
       users.forEach((user, index) => {
-        if (user[2] === "false" || user[2] === false) {
+        if (user[2] === "false" || user[2] === false) { // Исключаем администратора
           const userDiv = document.createElement("div");
-          userDiv.textContent = user[0];
+          userDiv.textContent = user[0]; // Никнейм
           userDiv.onclick = () => {
-            document.getElementById("adminNick").value = user[0];
+            adminNickInput.value = user[0];
             document.getElementById("adminPassword").value = user[1];
             document.getElementById("adminPoints").value = user[3];
             document.getElementById("adminHaricoins").value = user[4];
-            userDropdown.style.display = "none";
+            userDropdown.style.display = "none"; // Скрываем список после выбора
           };
           userDropdown.appendChild(userDiv);
         }
       });
+
+      // Показываем выпадающий список при клике на поле "Никнейм"
+      adminNickInput.onclick = () => {
+        console.log("Клик по полю 'Никнейм'"); // Отладочное сообщение
+        userDropdown.style.display = "block";
+      };
     }
 
-    // Функция для переключения выпадающего списка
-    function toggleDropdown() {
-      const userDropdown = document.getElementById("userDropdown");
-      userDropdown.style.display = userDropdown.style.display === "block" ? "none" : "block";
-    }
+    // Функция для обновления данных пользователя
+    async function updateUserData() {
+      const nick = document.getElementById("adminNick").value;
+      const points = parseInt(document.getElementById("adminPoints").value);
+      const haricoins = parseInt(document.getElementById("adminHaricoins").value);
 
-    // Функция для выхода
-    function logout() {
-      const adminPanel = document.getElementById("adminPanel");
-      const registrationForm = document.getElementById("registrationForm");
+      const users = await readData();
+      const userIndex = users.findIndex(user => user[0] === nick);
 
-      if (adminPanel && registrationForm) {
-        adminPanel.style.display = "none";
-        registrationForm.style.display = "block";
+      if (userIndex !== -1) {
+        const updatedUser = [
+          users[userIndex][0], // Никнейм
+          users[userIndex][1], // Пароль
+          users[userIndex][2], // Администратор
+          points, // Баллы
+          haricoins, // Харикоины
+        ];
+
+        const result = await updateData(userIndex + 1, updatedUser); // Обновляем данные в таблице
+        if (result.error) {
+          showMessage("Ошибка при обновлении данных!", "red");
+        } else {
+          showMessage("Данные пользователя обновлены!", "green");
+        }
       } else {
-        console.error("Элементы 'adminPanel' или 'registrationForm' не найдены в DOM.");
+        showMessage("Пользователь не найден!", "red");
       }
     }
 
@@ -371,88 +267,15 @@
       if (messageElement) {
         messageElement.innerText = message;
         messageElement.style.color = color;
+      } else {
+        console.error("Элемент для сообщений не найден!");
       }
     }
 
-    // Функция для обновления данных пользователя
-    async function updateUserData() {
-      const nick = document.getElementById("adminNick").value;
-      const points = document.getElementById("adminPoints").value;
-      const haricoins = document.getElementById("adminHaricoins").value;
-
-      if (!nick) {
-        showMessage("Выберите пользователя!", "red");
-        return;
-      }
-
-      try {
-        const users = await readData();
-        const userIndex = users.findIndex(user => user[0] === nick);
-
-        if (userIndex !== -1) {
-          users[userIndex][3] = parseInt(points, 10);
-          users[userIndex][4] = parseInt(haricoins, 10);
-
-          await writeAllData(users);
-          showMessage("Данные успешно обновлены!", "green");
-        } else {
-          showMessage("Пользователь не найден!", "red");
-        }
-      } catch (error) {
-        console.error("Ошибка при обновлении данных:", error);
-        showMessage("Ошибка при обновлении данных!", "red");
-      }
-    }
-
-    // Функция для записи всех данных в таблицу
-    async function writeAllData(data) {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?valueInputOption=RAW&key=${apiKey}`;
-      try {
-        const response = await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            values: data,
-          }),
-        });
-        const result = await response.json();
-        return result;
-      } catch (error) {
-        console.error("Ошибка при записи данных:", error);
-        showMessage("Ошибка при записи данных!", "red");
-      }
-    }
-
-    // Функция для удаления пользователя
-    async function deleteUser() {
-      const nick = document.getElementById("adminNick").value;
-
-      if (!nick) {
-        showMessage("Выберите пользователя!", "red");
-        return;
-      }
-
-      try {
-        const users = await readData();
-        const updatedUsers = users.filter(user => user[0] !== nick);
-
-        if (updatedUsers.length === users.length) {
-          showMessage("Пользователь не найден!", "red");
-          return;
-        }
-
-        await writeAllData(updatedUsers);
-        showMessage("Пользователь успешно удален!", "green");
-        document.getElementById("adminNick").value = "";
-        document.getElementById("adminPassword").value = "";
-        document.getElementById("adminPoints").value = "0";
-        document.getElementById("adminHaricoins").value = "0";
-      } catch (error) {
-        console.error("Ошибка при удалении пользователя:", error);
-        showMessage("Ошибка при удалении пользователя!", "red");
-      }
+    // Функция для выхода
+    function logout() {
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("registrationForm").style.display = "block";
     }
   </script>
 </body>
