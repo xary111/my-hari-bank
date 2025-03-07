@@ -122,6 +122,21 @@
       margin-top: 15px;
       font-weight: bold;
     }
+
+    .user-list {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .user-list div {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    .user-list div:hover {
+      background-color: #f9f9f9;
+    }
   </style>
 </head>
 <body>
@@ -292,10 +307,7 @@
         <h1>Hari Bank</h1>
         <div id="adminPanel">
           <h2>Панель администратора</h2>
-          <div class="form-group">
-            <label>Выберите пользователя:</label>
-            <select id="userList" onchange="showUserDetails()"></select>
-          </div>
+          <div class="user-list" id="userList"></div>
           <div class="form-group">
             <label>Никнейм:</label>
             <input type="text" id="adminNick" readonly>
@@ -322,14 +334,14 @@
       const userList = document.getElementById("userList");
       userList.innerHTML = ""; // Очищаем список перед заполнением
 
-      // Добавляем пользователей в выпадающий список
+      // Добавляем пользователей в список
       users.forEach((user, index) => {
         // Проверяем, что пользователь не является администратором
         if (user[2] === "false" || user[2] === false) {
-          const option = document.createElement("option");
-          option.value = index + 1; // Номер строки в таблице
-          option.textContent = user[0]; // Никнейм
-          userList.appendChild(option);
+          const userElement = document.createElement("div");
+          userElement.textContent = user[0]; // Никнейм
+          userElement.onclick = () => showUserDetails(index + 1); // Привязываем обработчик клика
+          userList.appendChild(userElement);
         }
       });
 
@@ -340,10 +352,7 @@
     }
 
     // Функция для отображения данных выбранного пользователя
-    async function showUserDetails() {
-      const userList = document.getElementById("userList");
-      const rowIndex = userList.value; // Получаем выбранное значение
-
+    async function showUserDetails(rowIndex) {
       const users = await readData();
       const user = users[rowIndex - 1]; // Индексация с 0
 
@@ -357,27 +366,57 @@
 
     // Функция для обновления данных пользователя
     async function updateUserData() {
-      const rowIndex = document.getElementById("userList").value;
-      const points = parseInt(document.getElementById("adminPoints").value);
-      const haricoins = parseInt(document.getElementById("adminHaricoins").value);
-
       const users = await readData();
-      const user = users[rowIndex - 1]; // Индексация с 0
+      const selectedUser = document.getElementById("adminNick").value;
+
+      const user = users.find(user => user[0] === selectedUser);
 
       if (user) {
+        const points = parseInt(document.getElementById("adminPoints").value);
+        const haricoins = parseInt(document.getElementById("adminHaricoins").value);
+
         user[3] = points; // Обновляем баллы
         user[4] = haricoins; // Обновляем харикоины
-        await updateData(rowIndex, user);
+
+        await updateData(users);
         showMessage("Данные пользователя обновлены!", "green");
       }
     }
 
     // Функция для удаления пользователя
     async function deleteUser() {
-      const rowIndex = document.getElementById("userList").value;
-      await deleteData(rowIndex);
+      const users = await readData();
+      const selectedUser = document.getElementById("adminNick").value;
+
+      const updatedUsers = users.filter(user => user[0] !== selectedUser);
+
+      await updateData(updatedUsers);
       showMessage("Пользователь удален!", "green");
-      showAdminPanel(await readData()); // Обновляем панель администратора
+      showAdminPanel(updatedUsers); // Обновляем панель администратора
+    }
+
+    // Функция для обновления данных в таблице
+    async function updateData(data) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?valueInputOption=RAW&key=${apiKey}`;
+
+      try {
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            values: data,
+          }),
+        });
+
+        const result = await response.json();
+        console.log("Результат обновления:", result);
+        return result;
+      } catch (error) {
+        console.error("Ошибка при обновлении данных:", error);
+        showMessage("Ошибка при обновлении данных!", "red");
+      }
     }
 
     // Функция для выхода
