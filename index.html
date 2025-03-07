@@ -320,7 +320,9 @@
 
       // Заполняем список пользователей
       const userList = document.getElementById("userList");
-      userList.innerHTML = "";
+      userList.innerHTML = ""; // Очищаем список перед заполнением
+
+      // Добавляем пользователей в выпадающий список
       users.forEach((user, index) => {
         if (user[2] === "false" || user[2] === false) { // Не показываем администратора
           const option = document.createElement("option");
@@ -337,7 +339,10 @@
     }
 
     // Функция для отображения данных выбранного пользователя
-    async function showUserDetails(rowIndex) {
+    async function showUserDetails() {
+      const userList = document.getElementById("userList");
+      const rowIndex = userList.value; // Получаем выбранное значение
+
       const users = await readData();
       const user = users[rowIndex - 1]; // Индексация с 0
 
@@ -364,6 +369,14 @@
         await updateData(rowIndex, user);
         showMessage("Данные пользователя обновлены!", "green");
       }
+    }
+
+    // Функция для удаления пользователя
+    async function deleteUser() {
+      const rowIndex = document.getElementById("userList").value;
+      await deleteData(rowIndex);
+      showMessage("Пользователь удален!", "green");
+      showAdminPanel(await readData()); // Обновляем панель администратора
     }
 
     // Функция для выхода
