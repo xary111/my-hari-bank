@@ -151,54 +151,77 @@
   </div>
 
   <script>
-    // При загрузке страницы проверяем, есть ли администратор
-    window.onload = function () {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
+    // Конфигурация Google Sheets API
+    const spreadsheetId = "1QYZeJonqTuGASyfIQN7BoV1Sls4zGChQCy_gHRh-9ck"; // Замени на ID своей таблицы
+    const apiKey = "AIzaSyC3DApHs_Xna0dszkfuPBxmwnsErqt8fZY"; // Замени на свой API-ключ
 
-      // Если администратора нет, создаем его
-      const adminExists = users.some(user => user.nick === "admin");
-      if (!adminExists) {
-        const adminUser = {
-          nick: "admin",
-          password: "admin123", // Пароль администратора
-          isAdmin: true, // Пометка, что это администратор
-          points: 0,
-          haricoins: 0
-        };
-        users.push(adminUser);
-        localStorage.setItem("users", JSON.stringify(users));
-      }
-    };
+    // Функция для чтения данных из таблицы
+    async function readData() {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.values; // Возвращает массив строк
+    }
+
+    // Функция для записи данных в таблицу
+    async function writeData(data) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1:append?valueInputOption=RAW&key=${apiKey}`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          values: [data], // Данные для записи (массив)
+        }),
+      });
+      return response.json();
+    }
+
+    // Функция для обновления данных в таблице
+    async function updateData(rowIndex, data) {
+      const range = `Sheet1!A${rowIndex}:E${rowIndex}`; // Диапазон для обновления
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW&key=${apiKey}`;
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          values: [data], // Данные для обновления
+        }),
+      });
+      return response.json();
+    }
+
+    // Функция для удаления данных из таблицы
+    async function deleteData(rowIndex) {
+      const range = `Sheet1!A${rowIndex}:E${rowIndex}`; // Диапазон для удаления
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+      });
+      return response.json();
+    }
 
     // Функция для регистрации
-    function register() {
-      const nick = document.getElementById("nick").value.trim(); // Убираем пробелы
-      const password = document.getElementById("password").value.trim(); // Убираем пробелы
+    async function register() {
+      const nick = document.getElementById("nick").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      // Проверяем, есть ли уже такой пользователь
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const userExists = users.some(user => user.nick === nick);
+      // Читаем данные из таблицы
+      const users = await readData();
+      const userExists = users.some(user => user[0] === nick);
 
       if (userExists) {
         showMessage("Пользователь с таким именем уже существует!", "red");
         return;
       }
 
-      // Создаем нового пользователя
-      const newUser = {
-        nick,
-        password, // В реальном проекте пароль нужно хешировать!
-        isAdmin: false, // По умолчанию пользователь не администратор
-        points: 0,
-        haricoins: 0
-      };
-
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
+      // Добавляем нового пользователя
+      const newUser = [nick, password, false, 0, 0]; // Формат строки
+      await writeData(newUser);
       showMessage("Регистрация прошла успешно!", "green");
-
-      // Отладочный вывод
-      console.log("Зарегистрированные пользователи:", users);
 
       // Очищаем поля ввода
       document.getElementById("nick").value = "";
@@ -206,23 +229,18 @@
     }
 
     // Функция для входа
-    function login() {
-      const nick = document.getElementById("nick").value.trim(); // Убираем пробелы
-      const password = document.getElementById("password").value.trim(); // Убираем пробелы
+    async function login() {
+      const nick = document.getElementById("nick").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const user = users.find(user => user.nick === nick && user.password === password);
-
-      // Отладочный вывод
-      console.log("Все пользователи:", users);
-      console.log("Найденный пользователь:", user);
+      // Читаем данные из таблицы
+      const users = await readData();
+      const user = users.find(user => user[0] === nick && user[1] === password);
 
       if (user) {
-        if (user.isAdmin) {
-          // Если это администратор, показываем панель администратора
+        if (user[2] === "true") { // Проверяем, является ли пользователь администратором
           showAdminPanel(users);
         } else {
-          // Если это обычный пользователь, показываем профиль
           showProfile(user);
         }
       } else {
@@ -237,9 +255,9 @@
         <h1>Hari Bank</h1>
         <div id="profile">
           <h2>Профиль</h2>
-          <p>Никнейм: <span id="profileNick">${user.nick}</span></p>
-          <p>Баллы: <span id="profilePoints">${user.points}</span></p>
-          <p>Харикоины: <span id="profileHaricoins">${user.haricoins}</span></p>
+          <p>Никнейм: <span id="profileNick">${user[0]}</span></p>
+          <p>Баллы: <span id="profilePoints">${user[3]}</span></p>
+          <p>Харикоины: <span id="profileHaricoins">${user[4]}</span></p>
           <button onclick="logout()">Выйти</button>
         </div>
       `;
@@ -281,64 +299,57 @@
       // Заполняем список пользователей
       const userList = document.getElementById("userList");
       userList.innerHTML = ""; // Очищаем список перед заполнением
-      users.forEach(user => {
-        if (!user.isAdmin) { // Не показываем администратора в списке
+      users.forEach((user, index) => {
+        if (user[2] === "false") { // Не показываем администратора в списке
           const option = document.createElement("option");
-          option.value = user.nick;
-          option.textContent = user.nick;
+          option.value = index + 1; // Номер строки в таблице
+          option.textContent = user[0]; // Никнейм
           userList.appendChild(option);
         }
       });
 
       // Показываем данные первого пользователя в списке
       if (users.length > 1) { // Исключаем администратора
-        showUserDetails();
+        showUserDetails(2); // Первый пользователь после администратора
       }
     }
 
     // Функция для отображения данных выбранного пользователя
-    function showUserDetails() {
-      const selectedUserNick = document.getElementById("userList").value;
-      const users = JSON.parse(localStorage.getItem("users"));
-      const user = users.find(user => user.nick === selectedUserNick);
+    async function showUserDetails(rowIndex) {
+      const users = await readData();
+      const user = users[rowIndex - 1]; // Индексация с 0
 
       if (user) {
-        document.getElementById("adminNick").value = user.nick;
-        document.getElementById("adminPassword").value = user.password;
-        document.getElementById("adminPoints").value = user.points;
-        document.getElementById("adminHaricoins").value = user.haricoins;
+        document.getElementById("adminNick").value = user[0];
+        document.getElementById("adminPassword").value = user[1];
+        document.getElementById("adminPoints").value = user[3];
+        document.getElementById("adminHaricoins").value = user[4];
       }
     }
 
     // Функция для обновления данных пользователя
-    function updateUserData() {
-      const selectedUserNick = document.getElementById("userList").value;
+    async function updateUserData() {
+      const rowIndex = document.getElementById("userList").value;
       const points = parseInt(document.getElementById("adminPoints").value);
       const haricoins = parseInt(document.getElementById("adminHaricoins").value);
 
-      const users = JSON.parse(localStorage.getItem("users"));
-      const user = users.find(user => user.nick === selectedUserNick);
+      const users = await readData();
+      const user = users[rowIndex - 1]; // Индексация с 0
 
       if (user) {
-        user.points = points;
-        user.haricoins = haricoins;
-        localStorage.setItem("users", JSON.stringify(users));
+        user[3] = points; // Обновляем баллы
+        user[4] = haricoins; // Обновляем харикоины
+        await updateData(rowIndex, user);
         showMessage("Данные пользователя обновлены!", "green");
       }
     }
 
     // Функция для удаления пользователя
-    function deleteUser() {
-      const selectedUserNick = document.getElementById("userList").value;
-      let users = JSON.parse(localStorage.getItem("users"));
-
-      // Удаляем пользователя из списка
-      users = users.filter(user => user.nick !== selectedUserNick);
-      localStorage.setItem("users", JSON.stringify(users));
-
-      // Обновляем список пользователей
-      showAdminPanel(users);
+    async function deleteUser() {
+      const rowIndex = document.getElementById("userList").value;
+      await deleteData(rowIndex);
       showMessage("Пользователь удален!", "green");
+      showAdminPanel(await readData()); // Обновляем панель администратора
     }
 
     // Функция для выхода
