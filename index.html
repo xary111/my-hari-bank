@@ -1,414 +1,1852 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hari Bank</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-image: url('https://raw.githubusercontent.com/xary111/my-hari-bank/main/WE_D0l8j6Js.jpg');
-      background-size: contain;
-      background-position: center;
-      background-attachment: fixed;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      position: relative;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hari Bank - Банк будущего</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #4D44DB;
+            --accent-color: #FF6584;
+            --dark-color: #2D3748;
+            --light-color: #F7FAFC;
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --rounded: 12px;
+            --transition: all 0.3s ease;
+        }
 
-    .gradient-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(67, 175, 87, 0.2) 33%,
-        rgba(33, 150, 243, 0.2) 66%,
-        rgba(243, 150, 33, 0.2) 100%
-      );
-      z-index: 1;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .leaf {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.18 2.74c-.29-.15-1.58-.87-2.99-.87-2.37 0-4.38 2.01-4.38 4.37 0 1.51.9 2.8 2.39 3.64.83.59 1.73.95 2.68 1.09.94.14 2.11.14 3.07 0 .76-.14 1.86-.5 2.68-1.1 1.49-.83 2.39-2.13 2.39-3.64 0-2.36-2.01-4.37-4.38-4.37-1.41 0-2.7-.72-2.99-1.09h.01z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      animation: fall 3s linear infinite;
-      z-index: 2;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F7FB;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
 
-    @keyframes fall {
-      0% {
-        transform: translateY(-100vh) rotate(0deg);
-        opacity: 0;
-      }
-      20% {
-        opacity: 1;
-      }
-      80% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-    .container {
-      position: relative;
-      z-index: 3;
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      width: 80%;
-      max-width: 600px;
-    }
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
 
-    h1 {
-      color: #4CAF50;
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
 
-    .form-group {
-      margin-bottom: 15px;
-    }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
 
-    label {
-      display: block;
-      margin-bottom: 5px;
-      color: #333;
-      font-weight: bold;
-    }
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-    }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
 
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
 
-    button:hover {
-      background-color: #45a049;
-      transform: scale(1.05);
-    }
+        .nav-links li {
+            margin-left: 30px;
+        }
 
-    #message {
-      margin-top: 15px;
-      font-weight: bold;
-    }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
 
-    #userDropdown {
-      display: none;
-      position: absolute;
-      background-color: white;
-      border: 1px solid #ddd;
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 10;
-    }
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
 
-    #userDropdown div {
-      padding: 10px;
-      cursor: pointer;
-    }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
 
-    #userDropdown div:hover {
-      background-color: #f1f1f1;
-    }
-  </style>
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--rounded);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(108, 99, 255, 0.2);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #e53e3e;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            text-align: center;
+            background: linear-gradient(135deg, #F5F7FB 0%, #E4E9F2 100%);
+        }
+
+        .hero-title {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: #718096;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background-color: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: #718096;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: #F7FAFC;
+            border-radius: var(--rounded);
+            padding: 30px;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .feature-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .feature-text {
+            color: #718096;
+        }
+
+        /* Auth Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--rounded);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--dark-color);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #E2E8F0;
+            border-radius: var(--rounded);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .form-footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .form-footer p {
+            color: #718096;
+            margin-top: 15px;
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            padding: 120px 0 60px;
+            display: none;
+        }
+
+        .welcome-section {
+            background-color: white;
+            border-radius: var(--rounded);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--primary-color);
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .welcome-text {
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--rounded);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+        }
+
+        .transaction-section {
+            background-color: white;
+            border-radius: var(--rounded);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transaction-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: #F7FAFC;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .transaction-table td {
+            padding: 15px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .transaction-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .transaction-table tr:hover {
+            background-color: #F7FAFC;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background-color: rgba(72, 187, 120, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-pending {
+            background-color: rgba(237, 137, 54, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-failed {
+            background-color: rgba(245, 101, 101, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Exchange Section */
+        .exchange-section {
+            background-color: white;
+            border-radius: var(--rounded);
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .exchange-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .exchange-card {
+            padding: 25px;
+            border-radius: var(--rounded);
+            background-color: #F7FAFC;
+            transition: var(--transition);
+        }
+
+        .exchange-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .exchange-card-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .exchange-rate {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .currency-input {
+            margin-bottom: 20px;
+        }
+
+        .currency-amount {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background-color: white;
+            border-radius: var(--rounded);
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: var(--rounded);
+            background-color: var(--success-color);
+            color: white;
+            box-shadow: var(--shadow);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification i {
+            margin-right: 10px;
+        }
+
+        .notification.error {
+            background-color: var(--danger-color);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--dark-color);
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            z-index: 99;
+            transform: translateY(-150%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.show {
+            transform: translateY(0);
+        }
+
+        .mobile-menu .nav-links {
+            flex-direction: column;
+        }
+
+        .mobile-menu .nav-links li {
+            margin: 10px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 150px 0 80px;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .exchange-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .auth-buttons {
+                display: none;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+        }
+
+        /* HariCoin Banner */
+        .haricoin-banner {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .haricoin-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .haricoin-price {
+            font-size: 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        .haricoin-change {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .positive {
+            background-color: var(--success-color);
+        }
+
+        .negative {
+            background-color: var(--danger-color);
+        }
+
+        /* Security Section */
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(72, 187, 120, 0.1);
+            color: var(--success-color);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .security-badge i {
+            margin-right: 5px;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark-color);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logout-btn i {
+            margin-right: 5px;
+        }
+
+        /* Password Strength Meter */
+        .password-strength {
+            height: 4px;
+            background-color: #E2E8F0;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .strength-weak {
+            background-color: var(--danger-color);
+        }
+
+        .strength-medium {
+            background-color: var(--warning-color);
+        }
+
+        .strength-strong {
+            background-color: var(--success-color);
+        }
+    </style>
 </head>
 <body>
-  <div class="gradient-overlay"></div>
-  <div class="leaf" style="left: 10%;"></div>
-  <div class="leaf" style="left: 30%; animation-delay: 0.5s;"></div>
-  <div class="leaf" style="left: 50%; animation-delay: 1s;"></div>
-  <div class="leaf" style="left: 70%; animation-delay: 1.5s;"></div>
-  <div class="leaf" style="left: 90%; animation-delay: 2s;"></div>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjNkM2M0ZGIiBkPSJNNDQ4IDI1NkM0NDggMTMwLjEgMzQxLjkgMzIgMjIwLjUgMzJTMjIgMTMwLjEgMjIgMjU2czEwNi4xIDIyNCAyMjcuNSAyMjRTNDQ4IDM4MS45IDQ0OCAyNTZ6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTI5Mi43IDEzNC45aC0zNS43djExNS4xaC0zNi4xdjExNS4xaC0zNS42djY0LjFoNzcuMyAxMzYuNHYtOTQuMWgtNzcuM3YtODAuMWg3Ny4zdi05NC4xaDc3LjN2LTExNi42aC0xMzYuNXptLTU5LjQgMzAuMSAzOS41LTQwLjRINDAuMmMtMTEuOCAwLTIwLjQgOC42LTIwLjQgMjAuNHYxNDEuOGMwIDExLjggOC42IDIwLjQgMjAuNCAyMC40aDc3LjN2LTY0LjFoLTM3LjN2LTYzLjhoODguNnYtMzQuNHoiLz48L3N2Zz4=" alt="Hari Bank Logo" class="logo-img">
+                    <span class="logo-text">Hari Bank</span>
+                </a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="mobile-menu" id="mobileMenu">
+                    <ul class="nav-links">
+                        <li><a href="#features">Возможности</a></li>
+                        <li><a href="#about">О нас</a></li>
+                        <li><a href="#contact">Контакты</a></li>
+                        <li>
+                            <button class="btn btn-outline" id="mobileLoginBtn" style="width: 100%; margin-top: 10px;">
+                                <i class="fas fa-sign-in-alt"></i> Вход
+                            </button>
+                        </li>
+                        <li>
+                            <button class="btn btn-primary" id="mobileRegisterBtn" style="width: 100%;">
+                                <i class="fas fa-user-plus"></i> Регистрация
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <ul class="nav-links" id="desktopNav">
+                    <li><a href="#features">Возможности</a></li>
+                    <li><a href="#about">О нас</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+                <div class="auth-buttons" id="authButtons">
+                    <button class="btn btn-outline" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Вход
+                    </button>
+                    <button class="btn btn-primary" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Регистрация
+                    </button>
+                </div>
+                <div class="auth-buttons" id="userMenu" style="display: none;">
+                    <button class="btn btn-outline" id="dashboardBtn">
+                        <i class="fas fa-user"></i> <span id="menuUserName">Профиль</span>
+                    </button>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Выйти
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-  <div class="container">
-    <h1>Hari Bank</h1>
-    <div id="registrationForm">
-      <h2>Регистрация</h2>
-      <div class="form-group">
-        <label>Nick_Name:</label>
-        <input type="text" id="nick" required>
-      </div>
-      <div class="form-group">
-        <label>Пароль:</label>
-        <input type="password" id="password" required>
-      </div>
-      <button onclick="register()">Зарегистрироваться</button>
-      <button onclick="login()">Войти</button>
-      <div id="message"></div>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <h1 class="hero-title">Добро пожаловать в Hari Bank</h1>
+            <p class="hero-subtitle">Будущее цифровых валют уже здесь. Покупайте, продавайте и обменивайте HariCoins с самой безопасной банковской платформой на основе блокчейн-технологий.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="heroRegisterBtn">
+                    <i class="fas fa-rocket"></i> Начать
+                </button>
+                <button class="btn btn-outline" id="learnMoreBtn">
+                    <i class="fas fa-info-circle"></i> Узнать больше
+                </button>
+            </div>
+            <div class="haricoin-banner">
+                <div class="container">
+                    <span class="haricoin-price">1 HariCoin = $<span id="currentHariCoinPrice">1.32</span></span>
+                    <span class="haricoin-change positive" id="hariCoinChange">+2.4%</span>
+                    <span class="security-badge">
+                        <i class="fas fa-lock"></i> Защищено SSL
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Наши преимущества</h2>
+                <p class="section-subtitle">Hari Bank предлагает инновационные решения для управления вашими цифровыми активами</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Безопасность</h3>
+                    <p class="feature-text">Многоуровневая система защиты, двухфакторная аутентификация и холодное хранение средств.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Быстрые транзакции</h3>
+                    <p class="feature-text">Мгновенные переводы между пользователями Hari Bank и быстрый вывод на внешние кошельки.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <h3 class="feature-title">Выгодный курс</h3>
+                    <p class="feature-text">Лучшие условия обмена и минимальные комиссии на рынке цифровых активов.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Вход в систему</h2>
+                <button class="close-btn" id="closeLoginModal">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="Введите ваш email" required>
+                    <div class="error-message" id="loginEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Введите ваш пароль" required>
+                    <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
+                    <div class="error-message" id="loginPasswordError"></div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginSubmitBtn">
+                        <span id="loginBtnText">Войти</span>
+                        <div class="spinner" id="loginSpinner" style="display: none;"></div>
+                    </button>
+                    <p><a href="#" id="forgotPasswordLink">Забыли пароль?</a></p>
+                    <p>Нет аккаунта? <a href="#" id="switchToRegister">Зарегистрироваться</a></p>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 
-  <div id="adminPanel" style="display: none;">
-    <h1>Hari Bank</h1>
-    <div>
-      <h2>Панель администратора</h2>
-      <div class="form-group">
-        <label>Выберите пользователя:</label>
-        <input type="text" id="adminNick" placeholder="Нажмите, чтобы выбрать пользователя" readonly>
-        <div id="userDropdown"></div>
-      </div>
-      <div class="form-group">
-        <label>Пароль:</label>
-        <input type="text" id="adminPassword" readonly>
-      </div>
-      <div class="form-group">
-        <label>Баллы:</label>
-        <input type="number" id="adminPoints" value="0">
-      </div>
-      <div class="form-group">
-        <label>Харикоины:</label>
-        <input type="number" id="adminHaricoins" value="0">
-      </div>
-      <button onclick="updateUserData()">Обновить данные</button>
-      <button onclick="deleteUser()" style="background-color: #ff4444;">Удалить пользователя</button>
-      <button onclick="logout()">Выйти</button>
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Создать аккаунт</h2>
+                <button class="close-btn" id="closeRegisterModal">&times;</button>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">ФИО</label>
+                    <input type="text" id="registerName" class="form-control" placeholder="Введите ваше полное имя" required>
+                    <div class="error-message" id="registerNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" class="form-control" placeholder="Введите ваш email" required>
+                    <div class="error-message" id="registerEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" class="form-control" placeholder="Создайте пароль (мин. 8 символов)" required>
+                    <i class="fas fa-eye password-toggle" id="toggleRegisterPassword"></i>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                    </div>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="registerConfirmPassword" class="form-control" placeholder="Подтвердите ваш пароль" required>
+                    <div class="error-message" id="registerConfirmPasswordError"></div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="registerSubmitBtn">
+                        <span id="registerBtnText">Создать аккаунт</span>
+                        <div class="spinner" id="registerSpinner" style="display: none;"></div>
+                    </button>
+                    <p>Уже есть аккаунт? <a href="#" id="switchToLogin">Войти</a></p>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 
-  <script>
-    const spreadsheetId = "1QYZeJonqTuGASyfIQN7BoV1Sls4zGChQCy_gHRh-9ck"; // Замени на свой ID
-    const apiKey = "AIzaSyAYXP4fq59VAGpyLjmKatydhBussnQF86c"; // Замени на свой API-ключ
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Восстановление пароля</h2>
+                <button class="close-btn" id="closeForgotPasswordModal">&times;</button>
+            </div>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgotPasswordEmail">Email</label>
+                    <input type="email" id="forgotPasswordEmail" class="form-control" placeholder="Введите ваш email" required>
+                    <div class="error-message" id="forgotPasswordEmailError"></div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="forgotPasswordSubmitBtn">
+                        <span id="forgotPasswordBtnText">Отправить ссылку</span>
+                        <div class="spinner" id="forgotPasswordSpinner" style="display: none;"></div>
+                    </button>
+                    <p>Вспомнили пароль? <a href="#" id="switchToLoginFromForgot">Войти</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    // Функция для чтения данных из таблицы
-    async function readData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1?key=${apiKey}`;
-      console.log("Запрос к таблице:", url);
+    <!-- Dashboard Section (Hidden by default) -->
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Добро пожаловать, <span id="userName">Пользователь</span>!</h1>
+                <p class="welcome-text">Здесь вы видите обзор ваших финансов и последние транзакции.</p>
+                <div class="tooltip">
+                    <i class="fas fa-info-circle" style="color: #718096;"></i>
+                    <span class="tooltiptext">Ваш баланс обновляется в реальном времени. Все транзакции защищены блокчейн-технологией.</span>
+                </div>
+            </div>
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Ошибка HTTP: ${response.status}`);
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="stat-value" id="hariCoinBalance">0.00 HC</div>
+                    <div class="stat-label">Баланс HariCoin</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-value" id="pointsBalance">0 Баллов</div>
+                    <div class="stat-label">Бонусные баллы</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="stat-value">1 HC = <span id="currentExchangeRate">50</span> баллов</div>
+                    <div class="stat-label">Текущий курс</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-value" id="investmentValue">$0.00</div>
+                    <div class="stat-label">Стоимость инвестиций</div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h2 class="section-title">Динамика курса HariCoin</h2>
+                <div class="chart-container" id="hariCoinChart">
+                    <!-- Chart will be rendered here -->
+                    <canvas id="chartCanvas"></canvas>
+                </div>
+            </div>
+
+            <div class="transaction-section">
+                <h2 class="section-title">Последние транзакции</h2>
+                <table class="transaction-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Дата</th>
+                            <th>Тип</th>
+                            <th>Сумма</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody">
+                        <!-- Transactions will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="exchange-section">
+                <h2 class="section-title">Обмен HariCoins</h2>
+                <div class="exchange-grid">
+                    <div class="exchange-card">
+                        <h3 class="exchange-card-title">Купить HariCoins</h3>
+                        <div class="exchange-rate">1 HC = $<span id="buyExchangeRate">1.32</span></div>
+                        <div class="form-group">
+                            <label for="buyAmount" class="currency-amount">Сумма в USD</label>
+                            <input type="number" id="buyAmount" class="form-control" placeholder="Введите сумму в USD" min="1" step="0.01">
+                            <div class="error-message" id="buyAmountError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="currency-amount">Вы получите: <span id="buyReceive">0.00</span> HC</label>
+                        </div>
+                        <button class="btn btn-primary" id="buyHariCoinsBtn" style="width: 100%;">
+                            <span id="buyBtnText">Купить HariCoins</span>
+                            <div class="spinner" id="buySpinner" style="display: none;"></div>
+                        </button>
+                    </div>
+                    <div class="exchange-card">
+                        <h3 class="exchange-card-title">Обмен на баллы</h3>
+                        <div class="exchange-rate">1 HC = <span id="pointsExchangeRate">50</span> баллов</div>
+                        <div class="form-group">
+                            <label for="exchangeAmount" class="currency-amount">Сумма в HC</label>
+                            <input type="number" id="exchangeAmount" class="form-control" placeholder="Введите сумму в HC" min="0.01" step="0.01">
+                            <div class="error-message" id="exchangeAmountError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="currency-amount">Вы получите: <span id="exchangeReceive">0</span> баллов</label>
+                        </div>
+                        <button class="btn btn-primary" id="exchangeHariCoinsBtn" style="width: 100%;">
+                            <span id="exchangeBtnText">Обменять</span>
+                            <div class="spinner" id="exchangeSpinner" style="display: none;"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage">Операция выполнена успешно!</span>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // DOM Elements
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const heroRegisterBtn = document.getElementById('heroRegisterBtn');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const mobileRegisterBtn = document.getElementById('mobileRegisterBtn');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const switchToLoginFromForgot = document.getElementById('switchToLoginFromForgot');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        const dashboard = document.getElementById('dashboard');
+        const heroSection = document.getElementById('hero');
+        const featuresSection = document.getElementById('features');
+        const userName = document.getElementById('userName');
+        const menuUserName = document.getElementById('menuUserName');
+        const hariCoinBalance = document.getElementById('hariCoinBalance');
+        const pointsBalance = document.getElementById('pointsBalance');
+        const currentExchangeRate = document.getElementById('currentExchangeRate');
+        const investmentValue = document.getElementById('investmentValue');
+        const transactionTableBody = document.getElementById('transactionTableBody');
+        const buyHariCoinsBtn = document.getElementById('buyHariCoinsBtn');
+        const exchangeHariCoinsBtn = document.getElementById('exchangeHariCoinsBtn');
+        const buyAmount = document.getElementById('buyAmount');
+        const buyReceive = document.getElementById('buyReceive');
+        const exchangeAmount = document.getElementById('exchangeAmount');
+        const exchangeReceive = document.getElementById('exchangeReceive');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const dashboardBtn = document.getElementById('dashboardBtn');
+        const authButtons = document.getElementById('authButtons');
+        const userMenu = document.getElementById('userMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+        const loginPassword = document.getElementById('loginPassword');
+        const toggleRegisterPassword = document.getElementById('toggleRegisterPassword');
+        const registerPassword = document.getElementById('registerPassword');
+        const passwordStrengthBar = document.getElementById('passwordStrengthBar');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const currentHariCoinPrice = document.getElementById('currentHariCoinPrice');
+        const hariCoinChange = document.getElementById('hariCoinChange');
+        const buyExchangeRate = document.getElementById('buyExchangeRate');
+        const pointsExchangeRate = document.getElementById('pointsExchangeRate');
+        const chartCanvas = document.getElementById('chartCanvas');
+
+        // Sample data for simulation
+        let users = [];
+        let currentUser = null;
+        let transactions = [];
+        let hariCoinPrice = 1.32;
+        let exchangeRate = 50;
+        let hariCoinHistory = [];
+        let chart = null;
+
+        // Initialize the application
+        function init() {
+            // Add some sample users for testing
+            users = [
+                {
+                    id: '1',
+                    name: 'Иван Иванов',
+                    email: 'ivan@example.com',
+                    password: 'Password123!',
+                    hariCoins: 125.75,
+                    points: 625,
+                    transactions: [
+                        {
+                            id: 'tx-123456',
+                            date: new Date('2023-06-15T10:30:00Z'),
+                            type: 'Обмен HC',
+                            amount: 500,
+                            currency: 'баллов',
+                            status: 'success'
+                        },
+                        {
+                            id: 'tx-123457',
+                            date: new Date('2023-06-10T14:15:00Z'),
+                            type: 'Покупка HC',
+                            amount: 25.75,
+                            currency: 'HC',
+                            status: 'success'
+                        },
+                        {
+                            id: 'tx-123458',
+                            date: new Date('2023-06-05T09:45:00Z'),
+                            type: 'Покупка HC',
+                            amount: 100.00,
+                            currency: 'HC',
+                            status: 'success'
+                        }
+                    ]
+                }
+            ];
+
+            // Generate HariCoin price history for the last 30 days
+            const today = new Date();
+            for (let i = 30; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                
+                // Random price fluctuation around $1.32
+                const price = 1.32 + (Math.random() * 0.2 - 0.1);
+                hariCoinHistory.push({
+                    date: date,
+                    price: parseFloat(price.toFixed(2))
+                });
+            }
+
+            // Set current price from the last history entry
+            hariCoinPrice = hariCoinHistory[hariCoinHistory.length - 1].price;
+            currentHariCoinPrice.textContent = hariCoinPrice.toFixed(2);
+            buyExchangeRate.textContent = hariCoinPrice.toFixed(2);
+
+            // Calculate price change percentage
+            const prevPrice = hariCoinHistory[hariCoinHistory.length - 2].price;
+            const changePercent = ((hariCoinPrice - prevPrice) / prevPrice * 100).toFixed(2);
+            
+            if (changePercent >= 0) {
+                hariCoinChange.textContent = `+${changePercent}%`;
+                hariCoinChange.className = 'haricoin-change positive';
+            } else {
+                hariCoinChange.textContent = `${changePercent}%`;
+                hariCoinChange.className = 'haricoin-change negative';
+            }
+
+            // Initialize chart
+            initChart();
         }
-        const data = await response.json();
-        console.log("Ответ от API:", data);
 
-        if (!data.values) {
-          console.error("Таблица пуста или данные не найдены.");
-          return [];
+        // Initialize price chart
+        function initChart() {
+            const ctx = chartCanvas.getContext('2d');
+            
+            // Prepare data for chart
+            const labels = hariCoinHistory.map(item => 
+                item.date.toLocaleDateString('ru-RU', { month: 'short', day: 'numeric' })
+            );
+            
+            const data = hariCoinHistory.map(item => item.price);
+            
+            // Determine line color based on price trend
+            const lineColor = data[data.length - 1] >= data[0] ? '#48BB78' : '#F56565';
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Цена HariCoin (USD)',
+                        data: data,
+                        borderColor: lineColor,
+                        backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Цена: $${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
-        return data.values;
-      } catch (error) {
-        console.error("Ошибка при чтении данных:", error);
-        showMessage("Ошибка при загрузке данных!", "red");
-        return [];
-      }
-    }
 
-    // Функция для записи данных в таблицу
-    async function writeData(data) {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1:append?valueInputOption=RAW&key=${apiKey}`;
-      console.log("Запрос на запись:", url, data);
+        // Show notification
+        function showNotification(message, isError = false) {
+            notificationMessage.textContent = message;
+            notification.className = isError ? 'notification error' : 'notification';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
 
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            values: [data],
-          }),
+        // Toggle password visibility
+        toggleLoginPassword.addEventListener('click', function() {
+            const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            loginPassword.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
         });
 
-        const result = await response.json();
-        console.log("Результат записи:", result);
-        return result;
-      } catch (error) {
-        console.error("Ошибка при записи данных:", error);
-        showMessage("Ошибка при записи данных!", "red");
-      }
-    }
+        toggleRegisterPassword.addEventListener('click', function() {
+            const type = registerPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            registerPassword.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
 
-    // Функция для регистрации
-    async function register() {
-      const nick = document.getElementById("nick").value.trim();
-      const password = document.getElementById("password").value.trim();
+        // Password strength indicator
+        registerPassword.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 1;
+            
+            // Contains numbers
+            if (/\d/.test(password)) strength += 1;
+            
+            // Contains special chars
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
+            
+            // Contains uppercase
+            if (/[A-Z]/.test(password)) strength += 1;
+            
+            // Update strength bar
+            passwordStrengthBar.style.width = `${strength * 25}%`;
+            
+            if (strength < 2) {
+                passwordStrengthBar.className = 'password-strength-bar strength-weak';
+            } else if (strength < 4) {
+                passwordStrengthBar.className = 'password-strength-bar strength-medium';
+            } else {
+                passwordStrengthBar.className = 'password-strength-bar strength-strong';
+            }
+        });
 
-      console.log("Регистрация:", nick, password);
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('show');
+        });
 
-      try {
-        const users = await readData();
-        const userExists = users.some(user => user[0] === nick);
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn) {
+                mobileMenu.classList.remove('show');
+            }
+        });
 
-        if (userExists) {
-          showMessage("Пользователь с таким именем уже существует!", "red");
-          return;
+        // Event Listeners
+        loginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+            mobileMenu.classList.remove('show');
+        });
+
+        mobileLoginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+            mobileMenu.classList.remove('show');
+        });
+
+        registerBtn.addEventListener('click', () => {
+            registerModal.style.display = 'flex';
+            mobileMenu.classList.remove('show');
+        });
+
+        mobileRegisterBtn.addEventListener('click', () => {
+            registerModal.style.display = 'flex';
+            mobileMenu.classList.remove('show');
+        });
+
+        heroRegisterBtn.addEventListener('click', () => {
+            registerModal.style.display = 'flex';
+        });
+
+        closeLoginModal.addEventListener('click', () => loginModal.style.display = 'none');
+        closeRegisterModal.addEventListener('click', () => registerModal.style.display = 'none');
+        closeForgotPasswordModal.addEventListener('click', () => forgotPasswordModal.style.display = 'none');
+
+        switchToRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.style.display = 'none';
+            registerModal.style.display = 'flex';
+        });
+
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        });
+
+        switchToLoginFromForgot.addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotPasswordModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        });
+
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.style.display = 'none';
+            forgotPasswordModal.style.display = 'flex';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) loginModal.style.display = 'none';
+            if (e.target === registerModal) registerModal.style.display = 'none';
+            if (e.target === forgotPasswordModal) forgotPasswordModal.style.display = 'none';
+        });
+
+        // Form Submissions
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Validate inputs
+            let isValid = true;
+            
+            if (!email) {
+                document.getElementById('loginEmailError').textContent = 'Пожалуйста, введите email';
+                document.getElementById('loginEmailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('loginEmailError').style.display = 'none';
+            }
+            
+            if (!password) {
+                document.getElementById('loginPasswordError').textContent = 'Пожалуйста, введите пароль';
+                document.getElementById('loginPasswordError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('loginPasswordError').style.display = 'none';
+            }
+            
+            if (!isValid) return;
+            
+            // Show loading spinner
+            document.getElementById('loginBtnText').style.display = 'none';
+            document.getElementById('loginSpinner').style.display = 'block';
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // In a real app, this would be a server-side authentication
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                loginModal.style.display = 'none';
+                heroSection.style.display = 'none';
+                featuresSection.style.display = 'none';
+                dashboard.style.display = 'block';
+                authButtons.style.display = 'none';
+                userMenu.style.display = 'flex';
+                menuUserName.textContent = user.name.split(' ')[0]; // Show first name only
+                updateDashboard();
+                showNotification('Вход выполнен успешно!');
+            } else {
+                document.getElementById('loginPasswordError').textContent = 'Неверный email или пароль';
+                document.getElementById('loginPasswordError').style.display = 'block';
+                showNotification('Ошибка входа. Проверьте данные.', true);
+            }
+            
+            // Hide loading spinner
+            document.getElementById('loginBtnText').style.display = 'block';
+            document.getElementById('loginSpinner').style.display = 'none';
+        });
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            // Validate inputs
+            let isValid = true;
+            
+            if (!name) {
+                document.getElementById('registerNameError').textContent = 'Пожалуйста, введите ваше имя';
+                document.getElementById('registerNameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('registerNameError').style.display = 'none';
+            }
+            
+            if (!email) {
+                document.getElementById('registerEmailError').textContent = 'Пожалуйста, введите email';
+                document.getElementById('registerEmailError').style.display = 'block';
+                isValid = false;
+            } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                document.getElementById('registerEmailError').textContent = 'Пожалуйста, введите корректный email';
+                document.getElementById('registerEmailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('registerEmailError').style.display = 'none';
+            }
+            
+            if (!password) {
+                document.getElementById('registerPasswordError').textContent = 'Пожалуйста, введите пароль';
+                document.getElementById('registerPasswordError').style.display = 'block';
+                isValid = false;
+            } else if (password.length < 8) {
+                document.getElementById('registerPasswordError').textContent = 'Пароль должен содержать минимум 8 символов';
+                document.getElementById('registerPasswordError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('registerPasswordError').style.display = 'none';
+            }
+            
+            if (password !== confirmPassword) {
+                document.getElementById('registerConfirmPasswordError').textContent = 'Пароли не совпадают';
+                document.getElementById('registerConfirmPasswordError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('registerConfirmPasswordError').style.display = 'none';
+            }
+            
+            if (!isValid) return;
+            
+            // Show loading spinner
+            document.getElementById('registerBtnText').style.display = 'none';
+            document.getElementById('registerSpinner').style.display = 'block';
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Check if user already exists
+            if (users.some(u => u.email === email)) {
+                document.getElementById('registerEmailError').textContent = 'Этот email уже зарегистрирован';
+                document.getElementById('registerEmailError').style.display = 'block';
+                showNotification('Этот email уже зарегистрирован', true);
+                
+                // Hide loading spinner
+                document.getElementById('registerBtnText').style.display = 'block';
+                document.getElementById('registerSpinner').style.display = 'none';
+                return;
+            }
+            
+            // Create new user (in real app, this would be a server-side operation)
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password,
+                hariCoins: 0,
+                points: 0,
+                transactions: []
+            };
+            
+            users.push(newUser);
+            currentUser = newUser;
+            registerModal.style.display = 'none';
+            heroSection.style.display = 'none';
+            featuresSection.style.display = 'none';
+            dashboard.style.display = 'block';
+            authButtons.style.display = 'none';
+            userMenu.style.display = 'flex';
+            menuUserName.textContent = name.split(' ')[0]; // Show first name only
+            updateDashboard();
+            
+            showNotification('Регистрация прошла успешно! Добро пожаловать!');
+            
+            // Hide loading spinner
+            document.getElementById('registerBtnText').style.display = 'block';
+            document.getElementById('registerSpinner').style.display = 'none';
+        });
+
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgotPasswordEmail').value;
+            
+            // Validate email
+            if (!email) {
+                document.getElementById('forgotPasswordEmailError').textContent = 'Пожалуйста, введите email';
+                document.getElementById('forgotPasswordEmailError').style.display = 'block';
+                return;
+            } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                document.getElementById('forgotPasswordEmailError').textContent = 'Пожалуйста, введите корректный email';
+                document.getElementById('forgotPasswordEmailError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('forgotPasswordEmailError').style.display = 'none';
+            }
+            
+            // Show loading spinner
+            document.getElementById('forgotPasswordBtnText').style.display = 'none';
+            document.getElementById('forgotPasswordSpinner').style.display = 'block';
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Check if user exists
+            const userExists = users.some(u => u.email === email);
+            
+            if (userExists) {
+                showNotification('Ссылка для восстановления пароля отправлена на ваш email');
+                forgotPasswordModal.style.display = 'none';
+            } else {
+                document.getElementById('forgotPasswordEmailError').textContent = 'Пользователь с таким email не найден';
+                document.getElementById('forgotPasswordEmailError').style.display = 'block';
+                showNotification('Пользователь с таким email не найден', true);
+            }
+            
+            // Hide loading spinner
+            document.getElementById('forgotPasswordBtnText').style.display = 'block';
+            document.getElementById('forgotPasswordSpinner').style.display = 'none';
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            dashboard.style.display = 'none';
+            heroSection.style.display = 'block';
+            featuresSection.style.display = 'block';
+            userMenu.style.display = 'none';
+            authButtons.style.display = 'flex';
+            showNotification('Вы успешно вышли из системы');
+        });
+
+        // Dashboard functionality
+        function updateDashboard() {
+            if (!currentUser) return;
+            
+            userName.textContent = currentUser.name;
+            hariCoinBalance.textContent = currentUser.hariCoins.toFixed(2) + ' HC';
+            pointsBalance.textContent = currentUser.points + ' баллов';
+            currentExchangeRate.textContent = exchangeRate;
+            pointsExchangeRate.textContent = exchangeRate;
+            investmentValue.textContent = '$' + (currentUser.hariCoins * hariCoinPrice).toFixed(2);
+            
+            // Update transaction table
+            transactionTableBody.innerHTML = '';
+            if (currentUser.transactions.length > 0) {
+                currentUser.transactions.sort((a, b) => b.date - a.date).forEach(tx => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${tx.id.substr(0, 8)}</td>
+                        <td>${tx.date.toLocaleDateString('ru-RU')}</td>
+                        <td>${tx.type}</td>
+                        <td>${tx.amount} ${tx.currency}</td>
+                        <td><span class="status status-${tx.status}">${tx.status === 'success' ? 'Успешно' : tx.status === 'pending' ? 'В обработке' : 'Ошибка'}</span></td>
+                    `;
+                    transactionTableBody.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" style="text-align: center;">Нет транзакций</td>';
+                transactionTableBody.appendChild(row);
+            }
         }
 
-        const newUser = [nick, password, false, 0, 0]; // Формат строки
-        await writeData(newUser);
-        showMessage("Регистрация прошла успешно!", "green");
+        // Buy HariCoins
+        buyAmount.addEventListener('input', () => {
+            const amount = parseFloat(buyAmount.value) || 0;
+            buyReceive.textContent = (amount / hariCoinPrice).toFixed(2);
+        });
 
-        document.getElementById("nick").value = "";
-        document.getElementById("password").value = "";
-      } catch (error) {
-        console.error("Ошибка при регистрации:", error);
-        showMessage("Ошибка при регистрации!", "red");
-      }
-    }
+        buyHariCoinsBtn.addEventListener('click', async () => {
+            const usdAmount = parseFloat(buyAmount.value);
+            
+            if (!usdAmount || usdAmount <= 0) {
+                document.getElementById('buyAmountError').textContent = 'Пожалуйста, введите корректную сумму';
+                document.getElementById('buyAmountError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('buyAmountError').style.display = 'none';
+            }
+            
+            const hcAmount = usdAmount / hariCoinPrice;
+            
+            // Show loading spinner
+            document.getElementById('buyBtnText').style.display = 'none';
+            document.getElementById('buySpinner').style.display = 'block';
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // In a real app, this would be a server-side operation with payment processing
+            currentUser.hariCoins += hcAmount;
+            
+            const tx = {
+                id: 'tx-' + Date.now(),
+                date: new Date(),
+                type: 'Покупка HC',
+                amount: hcAmount.toFixed(2),
+                currency: 'HC',
+                status: 'success'
+            };
+            
+            currentUser.transactions.unshift(tx);
+            updateDashboard();
+            buyAmount.value = '';
+            buyReceive.textContent = '0.00';
+            
+            showNotification(`Вы успешно приобрели ${hcAmount.toFixed(2)} HariCoins за $${usdAmount.toFixed(2)}`);
+            
+            // Hide loading spinner
+            document.getElementById('buyBtnText').style.display = 'block';
+            document.getElementById('buySpinner').style.display = 'none';
+        });
 
-    // Функция для входа
-    async function login() {
-      const nick = document.getElementById("nick").value.trim();
-      const password = document.getElementById("password").value.trim();
+        // Exchange HariCoins for Points
+        exchangeAmount.addEventListener('input', () => {
+            const amount = parseFloat(exchangeAmount.value) || 0;
+            exchangeReceive.textContent = Math.floor(amount * exchangeRate);
+        });
 
-      console.log("Вход:", nick, password);
+        exchangeHariCoinsBtn.addEventListener('click', async () => {
+            const hcAmount = parseFloat(exchangeAmount.value);
+            
+            if (!hcAmount || hcAmount <= 0) {
+                document.getElementById('exchangeAmountError').textContent = 'Пожалуйста, введите корректную сумму';
+                document.getElementById('exchangeAmountError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('exchangeAmountError').style.display = 'none';
+            }
+            
+            if (hcAmount > currentUser.hariCoins) {
+                document.getElementById('exchangeAmountError').textContent = 'Недостаточно HariCoins на балансе';
+                document.getElementById('exchangeAmountError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('exchangeAmountError').style.display = 'none';
+            }
+            
+            const points = Math.floor(hcAmount * exchangeRate);
+            
+            // Show loading spinner
+            document.getElementById('exchangeBtnText').style.display = 'none';
+            document.getElementById('exchangeSpinner').style.display = 'block';
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // In a real app, this would be a server-side operation
+            currentUser.hariCoins -= hcAmount;
+            currentUser.points += points;
+            
+            const tx = {
+                id: 'tx-' + Date.now(),
+                date: new Date(),
+                type: 'Обмен HC',
+                amount: points,
+                currency: 'баллов',
+                status: 'success'
+            };
+            
+            currentUser.transactions.unshift(tx);
+            updateDashboard();
+            exchangeAmount.value = '';
+            exchangeReceive.textContent = '0';
+            
+            showNotification(`Вы успешно обменяли ${hcAmount.toFixed(2)} HariCoins на ${points} баллов`);
+            
+            // Hide loading spinner
+            document.getElementById('exchangeBtnText').style.display = 'block';
+            document.getElementById('exchangeSpinner').style.display = 'none';
+        });
 
-      try {
-        const users = await readData();
-        console.log("Данные пользователей:", users); // Отладочное сообщение
-
-        if (!users || users.length === 0) {
-          showMessage("Ошибка: данные не загружены!", "red");
-          return;
-        }
-
-        const user = users.find(user => user[0] === nick && user[1] === password);
-
-        if (user) {
-          console.log("Найден пользователь:", user); // Отладочное сообщение
-
-          // Проверка на администратора (учитываем строку "TRUE" и булево значение true)
-          if (user[2] === true || user[2].toUpperCase() === "TRUE") {
-            console.log("Пользователь является администратором"); // Отладочное сообщение
-            showAdminPanel(users);
-          } else {
-            console.log("Пользователь не является администратором"); // Отладочное сообщение
-            showProfile(user);
-          }
-        } else {
-          showMessage("Неверный логин или пароль!", "red");
-        }
-      } catch (error) {
-        console.error("Ошибка при входе:", error);
-        showMessage("Ошибка при входе!", "red");
-      }
-    }
-
-    // Функция для отображения профиля
-    function showProfile(user) {
-      const container = document.querySelector(".container");
-      container.innerHTML = `
-        <h1>Hari Bank</h1>
-        <div id="profile">
-          <h2>Профиль</h2>
-          <p>Никнейм: <span id="profileNick">${user[0]}</span></p>
-          <p>Баллы: <span id="profilePoints">${user[3]}</span></p>
-          <p>Харикоины: <span id="profileHaricoins">${user[4]}</span></p>
-          <button onclick="logout()">Выйти</button>
-        </div>
-      `;
-    }
-
-    // Функция для отображения панели администратора
-    function showAdminPanel(users) {
-      document.getElementById("registrationForm").style.display = "none";
-      document.getElementById("adminPanel").style.display = "block";
-
-      const adminNickInput = document.getElementById("adminNick");
-      const userDropdown = document.getElementById("userDropdown");
-
-      // Очищаем выпадающий список
-      userDropdown.innerHTML = "";
-
-      // Добавляем пользователей в выпадающий список
-      users.forEach((user, index) => {
-        if (user[2] === "false" || user[2] === false) { // Исключаем администратора
-          const userDiv = document.createElement("div");
-          userDiv.textContent = user[0]; // Никнейм
-          userDiv.onclick = () => {
-            adminNickInput.value = user[0];
-            document.getElementById("adminPassword").value = user[1];
-            document.getElementById("adminPoints").value = user[3];
-            document.getElementById("adminHaricoins").value = user[4];
-            userDropdown.style.display = "none"; // Скрываем список после выбора
-          };
-          userDropdown.appendChild(userDiv);
-        }
-      });
-
-      // Показываем выпадающий список при клике на поле "Никнейм"
-      adminNickInput.onclick = () => {
-        userDropdown.style.display = "block";
-      };
-    }
-
-    // Функция для обновления данных пользователя
-    async function updateUserData() {
-      const nick = document.getElementById("adminNick").value;
-      const points = parseInt(document.getElementById("adminPoints").value);
-      const haricoins = parseInt(document.getElementById("adminHaricoins").value);
-
-      const users = await readData();
-      const userIndex = users.findIndex(user => user[0] === nick);
-
-      if (userIndex !== -1) {
-        const updatedUser = [
-          users[userIndex][0], // Никнейм
-          users[userIndex][1], // Пароль
-          users[userIndex][2], // Администратор
-          points, // Баллы
-          haricoins, // Харикоины
-        ];
-
-        const result = await updateData(userIndex + 1, updatedUser); // Обновляем данные в таблице
-        if (result.error) {
-          showMessage("Ошибка при обновлении данных!", "red");
-        } else {
-          showMessage("Данные пользователя обновлены!", "green");
-        }
-      } else {
-        showMessage("Пользователь не найден!", "red");
-      }
-    }
-
-    // Функция для отображения сообщений
-    function showMessage(message, color) {
-      const messageElement = document.getElementById("message");
-      if (messageElement) {
-        messageElement.innerText = message;
-        messageElement.style.color = color;
-      } else {
-        console.error("Элемент для сообщений не найден!");
-      }
-    }
-
-    // Функция для выхода
-    function logout() {
-      document.getElementById("adminPanel").style.display = "none";
-      document.getElementById("registrationForm").style.display = "block";
-    }
-  </script>
+        // Initialize the app
+        init();
+    </script>
 </body>
 </html>
